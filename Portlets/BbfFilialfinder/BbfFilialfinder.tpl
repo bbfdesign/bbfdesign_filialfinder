@@ -16,7 +16,7 @@
     {assign var=ffZoom value=$ffData.settings.map_default_zoom|default:14}
     {assign var=ffPluginUrl value=$ffData.pluginFrontendUrl|default:''}
     {assign var=ffBaseUrl value=$ffData.pluginBaseUrl|default:''}
-    {assign var=ffInstanceId value=$instance->getId()}
+    {assign var=ffInstanceId value=$instance->getId()|default:($smarty.now|md5|truncate:8:'')}
 
     {* ===== Frontend CSS (loaded via BbfFilialfinder.css auto-load by JTL) ===== *}
     {* Fallback: explicit link if auto-load doesn't work *}
@@ -596,17 +596,24 @@
             } catch(e) { return; }
 
             var validBranches = branches.filter(function(b) { return b.lat && b.lng; });
-            if (!validBranches.length) {
-                mapEl.innerHTML = '<p style="text-align:center;padding:40px;color:#999;">Keine Koordinaten vorhanden</p>';
-                return;
-            }
 
             {* Remove loading placeholder *}
             var loading = mapEl.querySelector('[data-ff-map-loading]');
             if (loading) loading.remove();
 
+            {* Default center: Germany or first valid branch *}
+            var centerLat = parseFloat(mapEl.dataset.centerLat) || 51.1657;
+            var centerLng = parseFloat(mapEl.dataset.centerLng) || 10.4515;
             var zoom = parseInt(mapEl.dataset.zoom) || {$ffZoom|default:14};
-            var map = L.map(mapEl, { scrollWheelZoom: false }).setView([validBranches[0].lat, validBranches[0].lng], zoom);
+
+            if (validBranches.length > 0) {
+                centerLat = validBranches[0].lat;
+                centerLng = validBranches[0].lng;
+            } else {
+                zoom = 6; {* Zoom out to show all of Germany when no markers *}
+            }
+
+            var map = L.map(mapEl, { scrollWheelZoom: false }).setView([centerLat, centerLng], zoom);
 
             L.tileLayer('https://{ldelim}s{rdelim}.tile.openstreetmap.org/{ldelim}z{rdelim}/{ldelim}x{rdelim}/{ldelim}y{rdelim}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
