@@ -59,8 +59,8 @@
             <tr data-calendar-id="{$calendar->id}">
               <td>{$calendar->name|escape:'html'}</td>
               <td>
-                <span class="bbf-text-sm bbf-text-muted" title="{$calendar->url|escape:'html'}">
-                  {$calendar->url|truncate:50:'...'|escape:'html'}
+                <span class="bbf-text-sm bbf-text-muted" title="{$calendar->ical_url|default:''|escape:'html'}">
+                  {$calendar->ical_url|default:''|truncate:50:'...'|escape:'html'}
                 </span>
               </td>
               <td>
