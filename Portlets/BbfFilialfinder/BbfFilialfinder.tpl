@@ -18,9 +18,12 @@
     {assign var=ffBaseUrl value=$ffData.pluginBaseUrl|default:''}
     {assign var=ffInstanceId value=$instance->getId()}
 
-    {* ===== Frontend CSS ===== *}
-    <link rel="stylesheet" href="{$ffPluginUrl}css/filialfinder.css">
-    {if $ffProvider === 'osm'}
+    {* ===== Frontend CSS (loaded via BbfFilialfinder.css auto-load by JTL) ===== *}
+    {* Fallback: explicit link if auto-load doesn't work *}
+    {if $ffPluginUrl}
+        <link rel="stylesheet" href="{$ffPluginUrl}css/filialfinder.css">
+    {/if}
+    {if $ffProvider === 'osm' && $ffBaseUrl}
         <link rel="stylesheet" href="{$ffBaseUrl}vendor/leaflet/leaflet.css">
     {/if}
 
@@ -472,14 +475,28 @@
         </div>
     {/if}
 
-    {* ===== JS: Leaflet (OSM) or Google Maps ===== *}
+    {* ===== JS: Leaflet (OSM) ===== *}
     {if $ffProvider === 'osm'}
-        <script src="{$ffBaseUrl}vendor/leaflet/leaflet.js"></script>
-        <script src="{$ffPluginUrl}js/filialfinder-core.js"></script>
-        <script src="{$ffPluginUrl}js/filialfinder-leaflet.js"></script>
-    {else}
-        <script src="{$ffPluginUrl}js/filialfinder-core.js"></script>
-        <script src="{$ffPluginUrl}js/filialfinder-google.js"></script>
+        {if $ffBaseUrl}
+            <script src="{$ffBaseUrl}vendor/leaflet/leaflet.js"></script>
+        {/if}
+        {* Fallback: if Leaflet not loaded from local, load from unpkg (DSGVO: only after consent) *}
+        <script>
+        if (typeof L === 'undefined') {
+            var s = document.createElement('script');
+            s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            s.onload = function() {
+                if (typeof L !== 'undefined') document.dispatchEvent(new Event('bbf-leaflet-ready'));
+            };
+            document.head.appendChild(s);
+            if (!document.querySelector('link[href*="leaflet.css"]')) {
+                var c = document.createElement('link');
+                c.rel = 'stylesheet';
+                c.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                document.head.appendChild(c);
+            }
+        }
+        </script>
     {/if}
 
     {* ===== Inline map initialization for the OPC portlet context ===== *}
@@ -622,27 +639,31 @@
             setTimeout(function() { map.invalidateSize(); }, 300);
         }
 
-        {* Auto-init: wait for Leaflet to be loaded, then init map *}
+        {* Auto-init: wait for Leaflet, then init map *}
         function tryInitMap() {
             if (!hasConsent()) return;
             if (provider === 'osm' && typeof L === 'undefined') {
-                {* Leaflet not loaded yet — retry in 200ms, up to 25 times (5s) *}
                 if (typeof tryInitMap._retries === 'undefined') tryInitMap._retries = 0;
-                if (tryInitMap._retries < 25) {
+                if (tryInitMap._retries < 50) {
                     tryInitMap._retries++;
                     setTimeout(tryInitMap, 200);
                 } else {
-                    if (mapEl) mapEl.innerHTML = '<p style="text-align:center;padding:40px;color:#999;">Leaflet.js konnte nicht geladen werden.</p>';
+                    if (mapEl) mapEl.innerHTML = '<p style="text-align:center;padding:40px;color:#c00;">Leaflet.js konnte nicht geladen werden. Pr&uuml;fen Sie die Plugin-Konfiguration.</p>';
                 }
                 return;
             }
             initMap();
         }
 
+        {* Listen for Leaflet CDN fallback load event *}
+        document.addEventListener('bbf-leaflet-ready', function() {
+            if (mapEl && !mapEl._leaflet_id) tryInitMap();
+        });
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', tryInitMap);
         } else {
-            tryInitMap();
+            setTimeout(tryInitMap, 100);
         }
     })();
     </script>

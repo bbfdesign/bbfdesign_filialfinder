@@ -99,13 +99,23 @@ class BbfFilialfinder extends Portlet
             }
             unset($branch);
 
-            // Resolve plugin paths for asset URLs in the template
+            // Resolve plugin paths — use $this->plugin (inherited from Portlet)
             $pluginFrontendUrl = '';
             $pluginBaseUrl = '';
-            $plugin = \JTL\Plugin\Helper::getPluginById('bbfdesign_filialfinder');
-            if ($plugin) {
-                $pluginFrontendUrl = $plugin->getPaths()->getFrontendURL();
-                $pluginBaseUrl = $plugin->getPaths()->getBaseURL();
+            try {
+                if (isset($this->plugin) && $this->plugin !== null) {
+                    $pluginFrontendUrl = $this->plugin->getPaths()->getFrontendURL();
+                    $pluginBaseUrl = $this->plugin->getPaths()->getBaseURL();
+                }
+            } catch (\Throwable $e) {
+                // Fallback: try Helper
+                try {
+                    $p = \JTL\Plugin\Helper::getPluginById('bbfdesign_filialfinder');
+                    if ($p) {
+                        $pluginFrontendUrl = $p->getPaths()->getFrontendURL();
+                        $pluginBaseUrl = $p->getPaths()->getBaseURL();
+                    }
+                } catch (\Throwable $e2) {}
             }
 
             return [
