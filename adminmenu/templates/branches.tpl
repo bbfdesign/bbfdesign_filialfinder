@@ -440,13 +440,16 @@ function bbfSaveBranch() {
     }
   }
 
-  // Convert comma-separated tags to JSON array
+  // Convert comma-separated tags to JSON array for saving
   var tagsField = document.getElementById('bbf-field-tags');
-  if (tagsField && tagsField.value.trim()) {
-    var tagsArr = tagsField.value.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
-    tagsField.value = JSON.stringify(tagsArr);
-  } else if (tagsField) {
-    tagsField.value = '[]';
+  if (tagsField) {
+    var rawTags = tagsField.value.trim();
+    if (rawTags && rawTags !== '[]') {
+      var tagsArr = rawTags.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+      tagsField.value = tagsArr.length > 0 ? JSON.stringify(tagsArr) : '';
+    } else {
+      tagsField.value = '';
+    }
   }
 
   var formData = new FormData(form);
@@ -540,28 +543,25 @@ function bbfGeocode() {
   var zip = document.getElementById('bbf-field-zip').value;
   var city = document.getElementById('bbf-field-city').value;
   var country = document.getElementById('bbf-field-country').value;
-  var address = [street, zip + ' ' + city, country].filter(Boolean).join(', ');
 
-  if (!address.trim()) { alert('Bitte zuerst eine Adresse eingeben.'); return; }
+  if (!city.trim()) { bbfToast('Bitte mindestens die Stadt eingeben.', 'error'); return; }
 
-  var formData = new FormData();
-  formData.append('action', 'geocode');
-  formData.append('address', address);
-  formData.append('is_ajax', '1');
-  formData.append('jtl_token', jtlToken);
-
-  fetch(postURL, { method: 'POST', body: formData })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.success && data.lat && data.lng) {
-        document.getElementById('bbf-field-latitude').value = data.lat;
-        document.getElementById('bbf-field-longitude').value = data.lng;
-        bbfUpdateMiniMap(data.lat, data.lng);
-      } else {
-        alert(data.message || 'Geocoding fehlgeschlagen.');
-      }
-    })
-    .catch(function() { alert('Geocoding fehlgeschlagen.'); });
+  bbfAjax('geocode', {
+    street: street,
+    zip: zip,
+    city: city,
+    country: country || 'DE'
+  }, function(r) {
+    if (r && r.success && r.lat && r.lng) {
+      document.getElementById('bbf-field-latitude').value = r.lat;
+      document.getElementById('bbf-field-longitude').value = r.lng;
+      bbfToast('Koordinaten ermittelt: ' + parseFloat(r.lat).toFixed(6) + ', ' + parseFloat(r.lng).toFixed(6), 'success');
+    } else if (r && r.errors && r.errors.length) {
+      r.errors.forEach(function(e) { bbfToast(e, 'error'); });
+    } else {
+      bbfToast('Geocoding fehlgeschlagen.', 'error');
+    }
+  });
 }
 
 function bbfUpdateMiniMap(lat, lng) {

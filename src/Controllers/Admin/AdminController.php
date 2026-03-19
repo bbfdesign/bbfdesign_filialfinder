@@ -302,16 +302,25 @@ class AdminController
             'is_active'        => (int)($_POST['is_active'] ?? 1),
         ];
 
-        // Handle tags as JSON
+        // Handle tags — input can be JSON array OR comma-separated string
         if (isset($_POST['tags'])) {
             $tagsRaw = trim($_POST['tags']);
-            if ($tagsRaw !== '') {
+            // Try JSON decode first (frontend sends JSON array)
+            $decoded = json_decode($tagsRaw, true);
+            if (is_array($decoded)) {
+                // Already JSON — filter empty values
+                $tags = array_values(array_filter(
+                    array_map('trim', $decoded),
+                    static fn(string $t): bool => $t !== ''
+                ));
+            } elseif ($tagsRaw !== '' && $tagsRaw !== '[]') {
+                // Comma-separated string (e.g. from import)
                 $tags = array_map('trim', explode(',', $tagsRaw));
                 $tags = array_values(array_filter($tags, static fn(string $t): bool => $t !== ''));
-                $data['tags'] = json_encode($tags, JSON_UNESCAPED_UNICODE);
             } else {
-                $data['tags'] = '[]';
+                $tags = [];
             }
+            $data['tags'] = !empty($tags) ? json_encode($tags, JSON_UNESCAPED_UNICODE) : null;
         }
 
         if (empty($data['name'])) {
