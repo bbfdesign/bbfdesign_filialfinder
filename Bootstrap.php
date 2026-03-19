@@ -27,6 +27,15 @@ class Bootstrap extends Bootstrapper
         try {
             $plugin = $this->getPlugin();
             $db = Shop::Container()->getDB();
+
+            // Check if our settings table exists (migration may not have run yet)
+            try {
+                $db->queryPrepared('SELECT 1 FROM `bbf_filialfinder_settings` LIMIT 1', [], 1);
+            } catch (\Throwable $e) {
+                // Tables don't exist yet — skip all boot logic
+                return;
+            }
+
             $settings = new Setting($db);
 
             if (Shop::isFrontend()) {

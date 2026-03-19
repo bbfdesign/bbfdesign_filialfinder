@@ -47,6 +47,17 @@ class ConsentService
         // The JTL Consent Manager integration is done via the consent_manager
         // table entries. We check if our vendor exists and create it if not.
         try {
+            // First check if the consent vendor table exists in this JTL version
+            $tableCheck = $this->db->queryPrepared(
+                "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'tconsent_vendor' LIMIT 1",
+                [],
+                1
+            );
+            if (!$tableCheck) {
+                // Table doesn't exist in this JTL version — skip consent registration
+                return;
+            }
+
             $pluginId = $this->plugin->getID();
             $existing = $this->db->queryPrepared(
                 "SELECT * FROM `tconsent_vendor` WHERE `plugin_id` = :pluginId AND `name` = :name LIMIT 1",
@@ -97,6 +108,14 @@ class ConsentService
     public function removeConsentVendor(): void
     {
         try {
+            $tableCheck = $this->db->queryPrepared(
+                "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'tconsent_vendor' LIMIT 1",
+                [],
+                1
+            );
+            if (!$tableCheck) {
+                return;
+            }
             $pluginId = $this->plugin->getID();
             $this->db->queryPrepared(
                 "DELETE FROM `tconsent_vendor` WHERE `plugin_id` = :pluginId AND `name` = :name",
