@@ -375,6 +375,7 @@ function bbfSaveBranch() {
   var form = document.getElementById('bbf-branch-form-data');
   var formData = new FormData(form);
   formData.append('action', 'saveBranch');
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
@@ -382,7 +383,7 @@ function bbfSaveBranch() {
     .then(function(data) {
       if (data.success) {
         bbfHideBranchForm();
-        if (typeof loadPage === 'function') loadPage('branches');
+        if (typeof getPage === 'function') getPage('branches');
       } else {
         alert(data.message || 'Fehler beim Speichern.');
       }
@@ -394,6 +395,7 @@ function bbfLoadBranchData(id) {
   var formData = new FormData();
   formData.append('action', 'getBranch');
   formData.append('branch_id', id);
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
@@ -427,6 +429,7 @@ function bbfGeocode() {
   var formData = new FormData();
   formData.append('action', 'geocode');
   formData.append('address', address);
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
@@ -509,12 +512,13 @@ function bbfBulkAction(action) {
   formData.append('action', 'bulkBranch');
   formData.append('bulkAction', action);
   formData.append('ids', JSON.stringify(ids));
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.success && typeof loadPage === 'function') loadPage('branches');
+      if (data.success && typeof getPage === 'function') getPage('branches');
     });
 }
 
@@ -523,6 +527,7 @@ function bbfToggleBranchStatus(id, el) {
   formData.append('action', 'toggleBranchStatus');
   formData.append('branch_id', id);
   formData.append('is_active', el.checked ? 1 : 0);
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
@@ -538,12 +543,13 @@ function bbfDeleteBranch(id) {
   var formData = new FormData();
   formData.append('action', 'deleteBranch');
   formData.append('branch_id', id);
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.success && typeof loadPage === 'function') loadPage('branches');
+      if (data.success && typeof getPage === 'function') getPage('branches');
     });
 }
 
@@ -551,12 +557,13 @@ function bbfDuplicateBranch(id) {
   var formData = new FormData();
   formData.append('action', 'duplicateBranch');
   formData.append('branch_id', id);
+  formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
   fetch(postURL, { method: 'POST', body: formData })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.success && typeof loadPage === 'function') loadPage('branches');
+      if (data.success && typeof getPage === 'function') getPage('branches');
     });
 }
 
@@ -569,7 +576,7 @@ function bbfFilterBranches() {
 }
 
 function bbfChangePerPage() {
-  if (typeof loadPage === 'function') loadPage('branches');
+  if (typeof getPage === 'function') getPage('branches');
 }
 
 function bbfPreviewImage(input) {

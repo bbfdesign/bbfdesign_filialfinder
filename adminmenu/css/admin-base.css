@@ -1,112 +1,70 @@
 /**
  * BBF Design System – CSS Custom Properties
  * BBF Filialfinder Admin
- * Konsistent mit bbfdesign_search / bbfdesign_customercenter Admin-Design
+ * Konsistent mit bbfdesign-Ökosystem (Routen-Plugin Referenz)
  */
 
 /* ─── Font Face ─── */
 
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-200.woff2') format('woff2');
-    font-weight: 200;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-300.woff2') format('woff2');
-    font-weight: 300;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-regular.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-500.woff2') format('woff2');
-    font-weight: 500;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-600.woff2') format('woff2');
-    font-weight: 600;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-700.woff2') format('woff2');
-    font-weight: 700;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Manrope';
-    src: url('../fonts/manrope-v15-latin-800.woff2') format('woff2');
-    font-weight: 800;
-    font-display: swap;
-}
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-200.woff2') format('woff2'); font-weight: 200; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-300.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-500.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-600.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('../fonts/manrope-v15-latin-800.woff2') format('woff2'); font-weight: 800; font-display: swap; }
 
-/* ─── Light Mode (Default) ─── */
+/* ─── Light Mode ─── */
 
 :root {
-    /* Farben – Primary (bbfdesign standard magenta) */
-    --bbf-primary: #db2e87;
-    --bbf-primary-dark: #c41f76;
-    --bbf-primary-light: #f9e8f1;
-    --bbf-primary-shadow: rgba(219, 46, 135, 0.3);
-    --bbf-primary-badge: #c8dd9b;
+    /* Primärfarbe – bbfdesign Orange */
+    --bbf-primary: #e8420a;
+    --bbf-primary-dark: #c73808;
+    --bbf-primary-light: rgba(232, 66, 10, 0.08);
+    --bbf-primary-shadow: rgba(232, 66, 10, 0.3);
 
-    /* Farben – Neutral */
-    --bbf-text: #29343d;
-    --bbf-text-dark: #29343d;
-    --bbf-text-medium: #454545;
-    --bbf-muted: #737385;
-
-    /* Farben – Background */
-    --bbf-bg: #f4f7fb;
+    /* Hintergründe */
+    --bbf-bg: #f0f2f5;
     --bbf-card-bg: #ffffff;
-    --bbf-body-bg: #f4f7fb;
     --bbf-sidebar-bg: #ffffff;
+    --bbf-body-bg: #f0f2f5;
     --bbf-input-bg: #f5f5f5;
 
-    /* Farben – Border */
-    --bbf-border: #e6e6e8;
-    --bbf-border-light: #f7f7f7;
-    --bbf-input-border: #f5f5f5;
-    --bbf-input-focus: rgba(219, 46, 135, 0.15);
+    /* Text */
+    --bbf-text: #333333;
+    --bbf-muted: #6b7280;
+    --bbf-body-text: #1f2937;
 
-    /* Farben – Status */
-    --bbf-success: #28a745;
-    --bbf-success-light: #d4edda;
-    --bbf-danger: #dc3545;
-    --bbf-danger-light: #f8d7da;
-    --bbf-warning: #ffc107;
-    --bbf-warning-light: #fff3cd;
-    --bbf-info: #17a2b8;
-    --bbf-info-light: #d1ecf1;
+    /* Rahmen */
+    --bbf-border: #e5e7eb;
+    --bbf-border-light: #f0f0f0;
+    --bbf-input-border: #e5e7eb;
+    --bbf-input-focus: rgba(232, 66, 10, 0.15);
 
-    /* Typografie */
-    --bbf-font: 'Manrope', Helvetica, Arial, Lucida, sans-serif;
+    /* Status */
+    --bbf-success: #16a34a;
+    --bbf-success-light: #dcfce7;
+    --bbf-danger: #dc2626;
+    --bbf-danger-light: #fee2e2;
+    --bbf-warning: #f59e0b;
+    --bbf-warning-light: #fef3c7;
+    --bbf-info: #0ea5e9;
+    --bbf-info-light: #e0f2fe;
 
-    /* Abstände & Radien */
+    /* Layout */
     --bbf-radius: 10px;
     --bbf-card-radius: 8px;
     --bbf-card-padding: 24px;
     --bbf-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     --bbf-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-
-    /* Sidebar */
     --bbf-sidebar-width: 260px;
+    --bbf-font: 'Manrope', Helvetica, Arial, sans-serif;
 
-    /* Tabelle */
-    --bbf-th-bg: #f6f9fc;
+    /* Tabellen */
+    --bbf-th-bg: #f8f9fa;
     --bbf-th-text: #6b7280;
-    --bbf-body-text: #1f2937;
     --bbf-row-stripe: #fafbfc;
-    --bbf-row-hover: rgba(219, 46, 135, 0.04);
+    --bbf-row-hover: rgba(232, 66, 10, 0.04);
 
     /* Transitions */
     --bbf-transition: 0.2s ease;
@@ -118,7 +76,6 @@
 .theme-dark {
     --bbf-sidebar-bg: #1a1a2e;
     --bbf-text: #e0e0e0;
-    --bbf-text-dark: #e0e0e0;
     --bbf-muted: #888;
     --bbf-card-bg: #252540;
     --bbf-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -129,7 +86,7 @@
     --bbf-th-bg: #1e1e36;
     --bbf-th-text: #aaa;
     --bbf-row-stripe: #1e1e36;
-    --bbf-row-hover: rgba(219, 46, 135, 0.08);
+    --bbf-row-hover: rgba(232, 66, 10, 0.08);
     --bbf-input-bg: #1e1e36;
     --bbf-input-border: #333355;
     --bbf-bg: #141425;

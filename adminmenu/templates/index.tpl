@@ -1,13 +1,18 @@
 <link rel="stylesheet" href="{$adminUrl}css/admin-base.css">
 <link rel="stylesheet" href="{$adminUrl}css/admin.css">
 
+{* Hide JTL default plugin header *}
+<style>
+#plugin-listing, .plugin-header, .content-header {ldelim} display: none !important; {rdelim}
+</style>
+
 <div class="bbf-plugin-page">
   {$jtl_token}
 
   {* ── Sidebar ── *}
   <div class="bbf-sidebar" id="bbf-sidebar">
     <div class="bbf-sidebar-header">
-      <div class="bbf-sidebar-logo">
+      <div>
         <img src="{$adminUrl}images/Logo_bbfdesign_dark_2024.png" alt="bbf.design" class="bbf-sidebar-logo-img">
       </div>
       <button type="button" class="bbf-sidebar-toggle" id="bbf-sidebar-toggle">
@@ -17,7 +22,6 @@
 
     <div class="bbf-sidebar-content">
 
-      {* ── FILIALEN ── *}
       <div class="bbf-nav-section">Filialen</div>
       <ul class="bbf-sidebar-nav">
         <li><a href="#" data-page="branches">
@@ -26,7 +30,6 @@
         </a></li>
       </ul>
 
-      {* ── DARSTELLUNG ── *}
       <div class="bbf-nav-section">Darstellung</div>
       <ul class="bbf-sidebar-nav">
         <li><a href="#" data-page="layouts">
@@ -43,7 +46,6 @@
         </a></li>
       </ul>
 
-      {* ── KONFIGURATION ── *}
       <div class="bbf-nav-section">Konfiguration</div>
       <ul class="bbf-sidebar-nav">
         <li><a href="#" data-page="map_provider">
@@ -68,7 +70,6 @@
         </a></li>
       </ul>
 
-      {* ── INFO ── *}
       <div class="bbf-nav-section">Info</div>
       <ul class="bbf-sidebar-nav">
         <li><a href="#" data-page="documentation">
@@ -80,7 +81,6 @@
           <span>Changelog</span>
         </a></li>
       </ul>
-
     </div>
 
     <div class="bbf-sidebar-footer">
@@ -101,19 +101,21 @@
 
     <div class="bbf-content">
       <div id="bbf-page-content">
-        <div class="bbf-text-center" style="padding: 60px 0;">
+        <div style="text-align:center; padding:60px 0;">
           <div class="bbf-spinner bbf-spinner-lg"></div>
-          <p class="bbf-mt-16 bbf-text-muted">Seite wird geladen...</p>
+          <p style="margin-top:16px; color:#999; font-size:14px;">Seite wird geladen...</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+{* ── Global JS Variables (OUTSIDE {literal}) ── *}
 <script>
   var postURL = "{$postURL|escape:'javascript'}";
   var adminUrl = "{$adminUrl|escape:'javascript'}";
-  var jtlToken = "{$smarty.session.jtl_token|default:''}";
+  var jtlToken = (document.querySelector('[name="jtl_token"]') || {ldelim}{rdelim}).value || '';
 </script>
-<script src="{$adminUrl}js/vendor/alpine.min.js" defer></script>
-<script src="{$adminUrl}js/admin.js" defer></script>
+
+{* ── Admin JS (jQuery-based navigation, loaded synchronously) ── *}
+<script src="{$adminUrl}js/admin.js"></script>
