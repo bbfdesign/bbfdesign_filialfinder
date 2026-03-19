@@ -18,10 +18,10 @@
 
 :root {
     /* Primärfarbe – bbfdesign Orange */
-    --bbf-primary: #e8420a;
-    --bbf-primary-dark: #c73808;
-    --bbf-primary-light: rgba(232, 66, 10, 0.08);
-    --bbf-primary-shadow: rgba(232, 66, 10, 0.3);
+    --bbf-primary: #db2e87;
+    --bbf-primary-dark: #c41f76;
+    --bbf-primary-light: rgba(219, 46, 135, 0.08);
+    --bbf-primary-shadow: rgba(219, 46, 135, 0.3);
 
     /* Hintergründe */
     --bbf-bg: #f0f2f5;
@@ -39,7 +39,7 @@
     --bbf-border: #e5e7eb;
     --bbf-border-light: #f0f0f0;
     --bbf-input-border: #e5e7eb;
-    --bbf-input-focus: rgba(232, 66, 10, 0.15);
+    --bbf-input-focus: rgba(219, 46, 135, 0.15);
 
     /* Status */
     --bbf-success: #16a34a;
@@ -64,7 +64,7 @@
     --bbf-th-bg: #f8f9fa;
     --bbf-th-text: #6b7280;
     --bbf-row-stripe: #fafbfc;
-    --bbf-row-hover: rgba(232, 66, 10, 0.04);
+    --bbf-row-hover: rgba(219, 46, 135, 0.04);
 
     /* Transitions */
     --bbf-transition: 0.2s ease;
@@ -86,7 +86,7 @@
     --bbf-th-bg: #1e1e36;
     --bbf-th-text: #aaa;
     --bbf-row-stripe: #1e1e36;
-    --bbf-row-hover: rgba(232, 66, 10, 0.08);
+    --bbf-row-hover: rgba(219, 46, 135, 0.08);
     --bbf-input-bg: #1e1e36;
     --bbf-input-border: #333355;
     --bbf-bg: #141425;

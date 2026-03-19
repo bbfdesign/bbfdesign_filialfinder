@@ -40,7 +40,7 @@ body #content_wrapper {
 #content .form-control:focus {
     border-color: var(--bbf-primary);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(219, 46, 135, 0.1);
 }
 
 #content .btn-primary {
@@ -151,7 +151,7 @@ body #content_wrapper {
 .bbf-sidebar-nav li a:hover {
     background: var(--bbf-primary);
     color: #fff;
-    box-shadow: 0 17px 20px -8px rgba(232, 66, 10, 0.23);
+    box-shadow: 0 17px 20px -8px rgba(219, 46, 135, 0.23);
 }
 
 .bbf-sidebar-nav li a:hover svg {
@@ -162,7 +162,7 @@ body #content_wrapper {
     background: var(--bbf-primary);
     color: #fff;
     font-weight: 500;
-    box-shadow: 0 17px 20px -8px rgba(232, 66, 10, 0.23);
+    box-shadow: 0 17px 20px -8px rgba(219, 46, 135, 0.23);
 }
 
 .bbf-sidebar-nav li a.bbf-nav-active svg {
@@ -394,7 +394,7 @@ body #content_wrapper {
 
 .bbf-btn-primary:hover {
     background: var(--bbf-primary-dark);
-    box-shadow: 0 8px 20px -6px rgba(232, 66, 10, 0.4);
+    box-shadow: 0 8px 20px -6px rgba(219, 46, 135, 0.4);
 }
 
 .bbf-btn-secondary {
@@ -657,7 +657,7 @@ textarea.bbf-form-control {
     display: inline-block;
     width: 32px;
     height: 32px;
-    border: 3px solid rgba(232, 66, 10, 0.15);
+    border: 3px solid rgba(219, 46, 135, 0.15);
     border-top-color: var(--bbf-primary);
     border-radius: 50%;
     animation: bbf-spin 0.8s linear infinite;

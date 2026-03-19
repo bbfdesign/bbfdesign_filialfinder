@@ -128,6 +128,7 @@ class Bootstrap extends Bootstrapper
         parent::installed();
         try {
             $db = Shop::Container()->getDB();
+            $this->ensureTables($db);
             $settings = new Setting($db);
             $settings->installDefaults();
         } catch (\Throwable $e) {
@@ -143,6 +144,7 @@ class Bootstrap extends Bootstrapper
         parent::updated($oldVersion, $newVersion);
         try {
             $db = Shop::Container()->getDB();
+            $this->ensureTables($db);
             $settings = new Setting($db);
             $settings->addMissingSettings();
         } catch (\Throwable $e) {
@@ -259,5 +261,137 @@ class Bootstrap extends Bootstrapper
             return $color;
         }
         return '#000000';
+    }
+
+    /**
+     * Ensure all plugin tables exist (IF NOT EXISTS).
+     * Called from installed() and updated() — more reliable than JTL migrations.
+     */
+    private function ensureTables(\JTL\DB\DbInterface $db): void
+    {
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_branch` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `description` TEXT,
+                `description_html` TEXT DEFAULT NULL,
+                `image_path` VARCHAR(500) DEFAULT NULL,
+                `street` VARCHAR(255) DEFAULT NULL,
+                `zip` VARCHAR(20) DEFAULT NULL,
+                `city` VARCHAR(100) DEFAULT NULL,
+                `country` VARCHAR(5) DEFAULT 'DE',
+                `phone` VARCHAR(50) DEFAULT NULL,
+                `email` VARCHAR(150) DEFAULT NULL,
+                `website` VARCHAR(500) DEFAULT NULL,
+                `latitude` DECIMAL(10,8) DEFAULT NULL,
+                `longitude` DECIMAL(11,8) DEFAULT NULL,
+                `google_place_id` VARCHAR(255) DEFAULT NULL,
+                `marker_color` VARCHAR(7) DEFAULT NULL,
+                `css_class` VARCHAR(100) DEFAULT NULL,
+                `tags` TEXT DEFAULT NULL,
+                `sort_order` INT DEFAULT 0,
+                `is_active` TINYINT(1) DEFAULT 1,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_hours` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `branch_id` INT NOT NULL,
+                `day_of_week` TINYINT NOT NULL,
+                `is_open` TINYINT(1) DEFAULT 1,
+                `open_time_1` TIME DEFAULT NULL,
+                `close_time_1` TIME DEFAULT NULL,
+                `open_time_2` TIME DEFAULT NULL,
+                `close_time_2` TIME DEFAULT NULL,
+                INDEX `idx_branch_day` (`branch_id`, `day_of_week`),
+                FOREIGN KEY (`branch_id`) REFERENCES `bbf_filialfinder_branch`(`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_special_days` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `branch_id` INT NOT NULL,
+                `date` DATE NOT NULL,
+                `is_closed` TINYINT(1) DEFAULT 0,
+                `open_time` TIME DEFAULT NULL,
+                `close_time` TIME DEFAULT NULL,
+                `note` VARCHAR(255) DEFAULT NULL,
+                INDEX `idx_branch_date` (`branch_id`, `date`),
+                FOREIGN KEY (`branch_id`) REFERENCES `bbf_filialfinder_branch`(`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_settings` (
+                `key_name` VARCHAR(100) PRIMARY KEY,
+                `value` TEXT DEFAULT NULL,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_holiday_calendars` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255) NOT NULL,
+                `ical_url` VARCHAR(1000) DEFAULT NULL,
+                `is_active` TINYINT(1) DEFAULT 1,
+                `last_sync` DATETIME DEFAULT NULL,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_holidays` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `calendar_id` INT DEFAULT NULL,
+                `name` VARCHAR(255) NOT NULL,
+                `date` DATE NOT NULL,
+                `is_recurring` TINYINT(1) DEFAULT 0,
+                `type` VARCHAR(20) DEFAULT 'holiday',
+                `applies_to_all` TINYINT(1) DEFAULT 1,
+                `branch_ids` TEXT DEFAULT NULL,
+                `default_closed` TINYINT(1) DEFAULT 1,
+                `open_override` TINYINT(1) DEFAULT 0,
+                `open_time` TIME DEFAULT NULL,
+                `close_time` TIME DEFAULT NULL,
+                `note` VARCHAR(500) DEFAULT NULL,
+                `highlight` TINYINT(1) DEFAULT 0,
+                `highlight_text` VARCHAR(255) DEFAULT NULL,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                INDEX `idx_date` (`date`),
+                INDEX `idx_type` (`type`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_gallery` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `branch_id` INT NOT NULL,
+                `image_path` VARCHAR(500) NOT NULL,
+                `title` VARCHAR(255) DEFAULT NULL,
+                `alt_text` VARCHAR(255) DEFAULT NULL,
+                `sort_order` INT DEFAULT 0,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (`branch_id`) REFERENCES `bbf_filialfinder_branch`(`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+
+        $db->query(
+            "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_videos` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `branch_id` INT NOT NULL,
+                `video_url` VARCHAR(1000) NOT NULL,
+                `video_type` VARCHAR(20) DEFAULT 'youtube',
+                `title` VARCHAR(255) DEFAULT NULL,
+                `thumbnail_path` VARCHAR(500) DEFAULT NULL,
+                `sort_order` INT DEFAULT 0,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (`branch_id`) REFERENCES `bbf_filialfinder_branch`(`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
     }
 }
