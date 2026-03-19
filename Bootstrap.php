@@ -161,10 +161,14 @@ class Bootstrap extends Bootstrapper
         if ($deleteData) {
             try {
                 $db = Shop::Container()->getDB();
-                $db->query('DROP TABLE IF EXISTS `bbf_filialfinder_special_days`');
-                $db->query('DROP TABLE IF EXISTS `bbf_filialfinder_hours`');
-                $db->query('DROP TABLE IF EXISTS `bbf_filialfinder_branch`');
-                $db->query('DROP TABLE IF EXISTS `bbf_filialfinder_settings`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_videos`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_gallery`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_holidays`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_holiday_calendars`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_special_days`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_hours`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_branch`');
+                $db->executeQuery('DROP TABLE IF EXISTS `bbf_filialfinder_settings`');
             } catch (\Throwable $e) {
                 \error_log('BBF Filialfinder: Uninstall error - ' . $e->getMessage());
             }
@@ -269,7 +273,7 @@ class Bootstrap extends Bootstrapper
      */
     private function ensureTables(\JTL\DB\DbInterface $db): void
     {
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_branch` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255) NOT NULL,
@@ -296,7 +300,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_hours` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `branch_id` INT NOT NULL,
@@ -311,7 +315,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_special_days` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `branch_id` INT NOT NULL,
@@ -325,7 +329,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_settings` (
                 `key_name` VARCHAR(100) PRIMARY KEY,
                 `value` TEXT DEFAULT NULL,
@@ -333,7 +337,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_holiday_calendars` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255) NOT NULL,
@@ -344,7 +348,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_holidays` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `calendar_id` INT DEFAULT NULL,
@@ -367,7 +371,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_gallery` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `branch_id` INT NOT NULL,
@@ -380,7 +384,7 @@ class Bootstrap extends Bootstrapper
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $db->query(
+        $db->executeQuery(
             "CREATE TABLE IF NOT EXISTS `bbf_filialfinder_videos` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `branch_id` INT NOT NULL,
