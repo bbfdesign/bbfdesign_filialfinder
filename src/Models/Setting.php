@@ -21,6 +21,7 @@ class Setting
         'google_custom_marker'   => '',
         'osm_tile_server'        => 'osm_standard',
         'osm_custom_tile_url'    => '',
+        'osm_maptiler_api_key'   => '',
         'osm_marker_color'       => '#C8B831',
         'map_default_zoom'       => '14',
         'map_max_zoom'           => '18',

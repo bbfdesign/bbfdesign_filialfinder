@@ -138,9 +138,21 @@
             </p>
             <p>
                 <strong>CSS-Klassen-Referenz:</strong> Alle Plugin-Elemente verwenden einheitliche CSS-Klassen mit dem
-                Pr&auml;fix <code>bbf-</code>. Die wichtigsten Klassen sind: <code>.bbf-filialfinder</code> (Container),
-                <code>.bbf-branch-list</code> (Filialliste), <code>.bbf-branch-item</code> (Einzelne Filiale),
-                <code>.bbf-map-container</code> (Kartenbereich) und <code>.bbf-status-badge</code> (Statusanzeige).
+                Pr&auml;fix <code>bbf-filialfinder-</code>. Die wichtigsten Klassen sind:
+                <code>.bbf-filialfinder-wrapper</code> (Hauptcontainer),
+                <code>.bbf-filialfinder-layout--default</code> (Standard-Layout),
+                <code>.bbf-filialfinder-list</code> (Filialliste),
+                <code>.bbf-filialfinder-card</code> (Einzelne Filial-Karte),
+                <code>.bbf-filialfinder-card--active</code> (Aktive/ausgew&auml;hlte Karte),
+                <code>.bbf-filialfinder-card-name</code> (Filialname),
+                <code>.bbf-filialfinder-card-address</code> (Adresse),
+                <code>.bbf-filialfinder-card-phone</code> (Telefon),
+                <code>.bbf-filialfinder-map</code> (Karten-Container),
+                <code>.bbf-filialfinder-status</code> (&Ouml;ffnungsstatus Badge),
+                <code>.bbf-filialfinder-status--open</code> (Ge&ouml;ffnet),
+                <code>.bbf-filialfinder-status--closed</code> (Geschlossen),
+                <code>.bbf-filialfinder-btn</code> (Button Basis) und
+                <code>.bbf-filialfinder-btn--route</code> (Route-Button).
             </p>
             <p>
                 <strong>Template-Overrides:</strong> Fortgeschrittene Benutzer k&ouml;nnen die Frontend-Templates

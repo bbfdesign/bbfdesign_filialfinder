@@ -111,7 +111,7 @@ class Bootstrap extends Bootstrapper
                             }
                         }
                     } catch (\Throwable $e) {
-                        // Silent fail
+                        \error_log('BBF Filialfinder: CSS injection via pq() failed - ' . $e->getMessage());
                     }
                 });
 

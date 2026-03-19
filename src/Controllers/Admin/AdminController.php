@@ -220,6 +220,8 @@ class AdminController
             'stamen_watercolor' => ['name' => 'Stamen Watercolor', 'url' => 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'],
             'cartodb_positron' => ['name' => 'CartoDB Positron', 'url' => 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'],
             'cartodb_dark' => ['name' => 'CartoDB Dark Matter', 'url' => 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
+            'openfreemap' => ['name' => 'OpenFreeMap (kostenlos)', 'url' => 'https://tiles.openfreemap.org/tile/{z}/{x}/{y}.png'],
+            'maptiler'    => ['name' => 'MapTiler (API-Key erforderlich)', 'url' => 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key={apikey}'],
             'custom'       => ['name' => 'Benutzerdefiniert', 'url' => ''],
         ]);
     }
@@ -302,6 +304,26 @@ class AdminController
             'sort_order'       => (int)($_POST['sort_order'] ?? 0),
             'is_active'        => (int)($_POST['is_active'] ?? 1),
         ];
+
+        // Auto-geocode if coordinates are missing but address is present
+        if ((empty($data['latitude']) || empty($data['longitude']))
+            && !empty($data['city'])) {
+            try {
+                $geocoder = new GeocodingService($this->settings);
+                $coords = $geocoder->geocode(
+                    $data['street'] ?? '',
+                    $data['zip'] ?? '',
+                    $data['city'] ?? '',
+                    $data['country'] ?? 'DE'
+                );
+                if ($coords !== null) {
+                    $data['latitude'] = $coords['lat'];
+                    $data['longitude'] = $coords['lng'];
+                }
+            } catch (\Throwable $e) {
+                // Geocoding failed silently — coordinates remain null
+            }
+        }
 
         // Handle tags — input can be JSON array OR comma-separated string
         if (isset($_POST['tags'])) {

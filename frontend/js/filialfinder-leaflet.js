@@ -91,7 +91,7 @@
         });
 
         // Tile layer
-        var tileUrl = mapSettings.tileServer || DEFAULT_TILE_URL;
+        var tileUrl = mapSettings._resolved_tile_url || mapSettings.tileServer || DEFAULT_TILE_URL;
         var tileAttribution = mapSettings.tileAttribution || DEFAULT_TILE_ATTRIBUTION;
 
         L.tileLayer(tileUrl, {
@@ -295,7 +295,7 @@
        ============================================= */
 
     function initLeaflet() {
-        var containers = document.querySelectorAll('[data-filialfinder][data-map-provider="leaflet"]');
+        var containers = document.querySelectorAll('[data-filialfinder][data-provider="osm"]');
         containers.forEach(function (container) {
             if (container._bbfLeafletMap) return;
             var handler = new LeafletHandler(container);

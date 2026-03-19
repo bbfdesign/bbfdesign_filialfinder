@@ -27,7 +27,7 @@
          style="{$instance->getStyleString()}">
 
         {* ===== CSS inside wrapper (JTL OPC strips <link>/<style> outside portlet div) ===== *}
-        <style scoped>
+        <style>
             @import url('{if $ffPluginUrl}{$ffPluginUrl}css/filialfinder.css{else}/plugins/bbfdesign_filialfinder/frontend/css/filialfinder.css{/if}');
             {if $ffProvider === 'osm'}
             @import url('{if $ffBaseUrl}{$ffBaseUrl}vendor/leaflet/leaflet.css{else}/plugins/bbfdesign_filialfinder/vendor/leaflet/leaflet.css{/if}');
@@ -111,10 +111,17 @@
                                         {/if}
                                         <span class="bbf-filialfinder-card-distance" data-ff-distance="{$branch.id|intval}"></span>
                                         <div class="bbf-filialfinder-card-actions">
-                                            <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
-                                               class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
-                                                Route berechnen
-                                            </a>
+                                            {if $branch.latitude && $branch.longitude}
+                                                <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
+                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                    Route berechnen
+                                                </a>
+                                            {else}
+                                                <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
+                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                    Auf Karte zeigen
+                                                </a>
+                                            {/if}
                                         </div>
                                     </div>
                                 </div>
@@ -247,10 +254,17 @@
                                         </span>
                                     {/if}
                                     <div class="bbf-filialfinder-card-actions">
-                                        <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
-                                           class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
-                                            Route berechnen
-                                        </a>
+                                        {if $branch.latitude && $branch.longitude}
+                                            <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
+                                               class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                Route berechnen
+                                            </a>
+                                        {else}
+                                            <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
+                                               class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                Auf Karte zeigen
+                                            </a>
+                                        {/if}
                                     </div>
                                 </div>
                             </div>
@@ -321,10 +335,17 @@
                                                 </span>
                                             {/if}
                                             <div class="bbf-filialfinder-card-actions">
-                                                <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
-                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
-                                                    Route berechnen
-                                                </a>
+                                                {if $branch.latitude && $branch.longitude}
+                                                    <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
+                                                       class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                        Route berechnen
+                                                    </a>
+                                                {else}
+                                                    <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
+                                                       class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                        Auf Karte zeigen
+                                                    </a>
+                                                {/if}
                                             </div>
                                         </div>
                                         {if $ffShowMap}
@@ -415,11 +436,19 @@
                                             <span data-ff-distance="{$branch.id|intval}">&ndash;</span>
                                         </td>
                                         <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--actions">
-                                            <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
-                                               class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
-                                               target="_blank" rel="noopener noreferrer" title="Route berechnen">
-                                                Route
-                                            </a>
+                                            {if $branch.latitude && $branch.longitude}
+                                                <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
+                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
+                                                   target="_blank" rel="noopener noreferrer" title="Route berechnen">
+                                                    Route
+                                                </a>
+                                            {else}
+                                                <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
+                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
+                                                   target="_blank" rel="noopener noreferrer" title="Auf Karte zeigen">
+                                                    Karte
+                                                </a>
+                                            {/if}
                                         </td>
                                     </tr>
                                 {/foreach}
@@ -448,8 +477,8 @@
                 "street": {$branch.street|json_encode},
                 "zip": {$branch.zip|json_encode},
                 "city": {$branch.city|json_encode},
-                "lat": {$branch.latitude|default:0},
-                "lng": {$branch.longitude|default:0},
+                "lat": {if $branch.latitude}{$branch.latitude}{else}null{/if},
+                "lng": {if $branch.longitude}{$branch.longitude}{else}null{/if},
                 "phone": {$branch.phone|default:''|json_encode},
                 "markerColor": {$branch.marker_color|default:''|json_encode}
             {rdelim}{if !$smarty.foreach.markers.last},{/if}
@@ -476,7 +505,10 @@
         {* CDN Fallback: if local Leaflet failed to load *}
         <script>
         if (typeof L === 'undefined') {
-            document.write('<scr' + 'ipt src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/scr' + 'ipt>');
+            var _s = document.createElement('script');
+            _s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            _s.onload = function() { document.dispatchEvent(new Event('bbf-leaflet-ready')); };
+            document.head.appendChild(_s);
             if (!document.querySelector('link[href*="leaflet.css"]')) {
                 var _c = document.createElement('link'); _c.rel = 'stylesheet';
                 _c.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
@@ -602,7 +634,15 @@
 
             var map = L.map(mapEl, { scrollWheelZoom: false }).setView([centerLat, centerLng], zoom);
 
-            L.tileLayer('https://{ldelim}s{rdelim}.tile.openstreetmap.org/{ldelim}z{rdelim}/{ldelim}x{rdelim}/{ldelim}y{rdelim}.png', {
+            var tileUrl = 'https://{ldelim}s{rdelim}.tile.openstreetmap.org/{ldelim}z{rdelim}/{ldelim}x{rdelim}/{ldelim}y{rdelim}.png';
+            try {
+                var settingsStr = wrapper.getAttribute('data-settings');
+                if (settingsStr) {
+                    var s = JSON.parse(settingsStr);
+                    if (s._resolved_tile_url) tileUrl = s._resolved_tile_url;
+                }
+            } catch(e) {}
+            L.tileLayer(tileUrl, {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
