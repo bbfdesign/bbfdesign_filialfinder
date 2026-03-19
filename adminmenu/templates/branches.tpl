@@ -117,6 +117,7 @@
         <a href="#" class="bbf-tab-link active" data-tab="tab-general" onclick="bbfSwitchTab(event, 'tab-general')">Allgemein</a>
         <a href="#" class="bbf-tab-link" data-tab="tab-contact" onclick="bbfSwitchTab(event, 'tab-contact')">Kontakt &amp; Adresse</a>
         <a href="#" class="bbf-tab-link" data-tab="tab-hours" onclick="bbfSwitchTab(event, 'tab-hours')">&Ouml;ffnungszeiten</a>
+        <a href="#" class="bbf-tab-link" data-tab="tab-media" onclick="bbfSwitchTab(event, 'tab-media')">Medien</a>
         <a href="#" class="bbf-tab-link" data-tab="tab-advanced" onclick="bbfSwitchTab(event, 'tab-advanced')">Erweitert</a>
       </div>
 
@@ -128,8 +129,16 @@
         </div>
 
         <div class="bbf-form-group">
-          <label class="bbf-form-label" for="bbf-field-description">Beschreibung</label>
-          <textarea class="bbf-form-control" id="bbf-field-description" name="description" rows="4" placeholder="Optionale Beschreibung der Filiale..."></textarea>
+          <label class="bbf-form-label">Beschreibung (HTML)</label>
+          <textarea class="bbf-summernote" id="bbf-field-description_html" name="description_html"></textarea>
+          <input type="hidden" id="bbf-field-description" name="description" value="">
+          <span class="bbf-form-hint">Rich-Text-Editor f&uuml;r die Filialbeschreibung. Wird im Detail-Modal und im Frontend angezeigt.</span>
+        </div>
+
+        <div class="bbf-form-group">
+          <label class="bbf-form-label" for="bbf-field-tags">Tags</label>
+          <input type="text" class="bbf-form-control" id="bbf-field-tags" name="tags" placeholder="z.B. Flagship, Outlet, Click&amp;Collect (kommagetrennt)">
+          <span class="bbf-form-hint">Kommagetrennte Tags f&uuml;r Filterung und Kategorisierung im Frontend.</span>
         </div>
 
         <div class="bbf-form-group">
@@ -305,6 +314,50 @@
         </div>
       </div>
 
+      {* ── Tab: Medien (Galerie & Videos) ── *}
+      <div class="bbf-tab-content" id="tab-media">
+        <h3 style="margin:0 0 16px;">Galerie</h3>
+        <p class="bbf-form-hint" style="margin-bottom:12px;">Bilder f&uuml;r das Detail-Modal. Drag &amp; Drop zum Sortieren. Max. 10 Bilder.</p>
+
+        <div id="bbf-gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-bottom:16px;">
+          {* Gallery images loaded dynamically when editing *}
+        </div>
+
+        <div class="bbf-form-group">
+          <div class="bbf-upload-area" style="padding:20px;cursor:pointer;" onclick="document.getElementById('bbf-gallery-upload').click();">
+            <input type="file" id="bbf-gallery-upload" accept="image/*" multiple style="display:none;" onchange="bbfUploadGalleryImages(this);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p style="margin-top:8px;font-size:13px;color:var(--bbf-muted);">Bilder hinzuf&uuml;gen (klicken oder hierher ziehen)</p>
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--bbf-border);margin:24px 0;">
+
+        <h3 style="margin:0 0 16px;">Videos</h3>
+        <p class="bbf-form-hint" style="margin-bottom:12px;">YouTube-, Vimeo- oder MP4-URLs hinzuf&uuml;gen.</p>
+
+        <div id="bbf-video-list" style="margin-bottom:16px;">
+          {* Videos loaded dynamically when editing *}
+        </div>
+
+        <div class="bbf-form-row" style="align-items:flex-end;">
+          <div class="bbf-form-group" style="flex:1;">
+            <label class="bbf-form-label" for="bbf-video-url">Video-URL</label>
+            <input type="url" class="bbf-form-control" id="bbf-video-url" placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+          <div class="bbf-form-group" style="flex:0;">
+            <label class="bbf-form-label" for="bbf-video-title">Titel (optional)</label>
+            <input type="text" class="bbf-form-control" id="bbf-video-title" placeholder="Filialvideo">
+          </div>
+          <div class="bbf-form-group">
+            <button type="button" class="bbf-btn bbf-btn-secondary bbf-btn-sm" onclick="bbfAddVideo()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Hinzuf&uuml;gen
+            </button>
+          </div>
+        </div>
+      </div>
+
       {* ── Tab: Erweitert ── *}
       <div class="bbf-tab-content" id="tab-advanced">
         <div class="bbf-form-group">
@@ -373,6 +426,29 @@ function bbfHideBranchForm() {
 
 function bbfSaveBranch() {
   var form = document.getElementById('bbf-branch-form-data');
+
+  // Sync Summernote content before submit
+  var htmlEditor = document.getElementById('bbf-field-description_html');
+  if (htmlEditor && typeof $ !== 'undefined' && typeof $.fn.summernote !== 'undefined') {
+    htmlEditor.value = $(htmlEditor).summernote('code');
+    // Also set plain text description
+    var descField = document.getElementById('bbf-field-description');
+    if (descField) {
+      var tmp = document.createElement('div');
+      tmp.innerHTML = $(htmlEditor).summernote('code');
+      descField.value = tmp.textContent || tmp.innerText || '';
+    }
+  }
+
+  // Convert comma-separated tags to JSON array
+  var tagsField = document.getElementById('bbf-field-tags');
+  if (tagsField && tagsField.value.trim()) {
+    var tagsArr = tagsField.value.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+    tagsField.value = JSON.stringify(tagsArr);
+  } else if (tagsField) {
+    tagsField.value = '[]';
+  }
+
   var formData = new FormData(form);
   formData.append('action', 'saveBranch');
   formData.append('is_ajax', '1');
@@ -403,7 +479,7 @@ function bbfLoadBranchData(id) {
     .then(function(data) {
       if (data.success && data.branch) {
         var b = data.branch;
-        var fields = ['name','description','street','zip','city','country','phone','email','website','latitude','longitude','google_place_id','css_class','sort_order'];
+        var fields = ['name','street','zip','city','country','phone','email','website','latitude','longitude','google_place_id','css_class','sort_order'];
         fields.forEach(function(f) {
           var el = document.getElementById('bbf-field-' + f);
           if (el) el.value = b[f] || '';
@@ -412,6 +488,48 @@ function bbfLoadBranchData(id) {
         if (b.marker_color) {
           document.getElementById('bbf-field-marker_color').value = b.marker_color;
           document.getElementById('bbf-field-marker_color_hex').value = b.marker_color;
+        }
+
+        // Summernote HTML description
+        var htmlEditor = document.getElementById('bbf-field-description_html');
+        if (htmlEditor && typeof $ !== 'undefined' && typeof $.fn.summernote !== 'undefined') {
+          $(htmlEditor).summernote('code', b.description_html || b.description || '');
+        } else if (htmlEditor) {
+          htmlEditor.value = b.description_html || b.description || '';
+        }
+        // Hidden plain description field
+        var descField = document.getElementById('bbf-field-description');
+        if (descField) descField.value = b.description || '';
+
+        // Tags (JSON array → comma-separated string)
+        var tagsField = document.getElementById('bbf-field-tags');
+        if (tagsField && b.tags) {
+          try {
+            var tagsArr = typeof b.tags === 'string' ? JSON.parse(b.tags) : b.tags;
+            tagsField.value = Array.isArray(tagsArr) ? tagsArr.join(', ') : '';
+          } catch(e) { tagsField.value = ''; }
+        }
+
+        // Load gallery images
+        var grid = document.getElementById('bbf-gallery-grid');
+        if (grid) {
+          grid.innerHTML = '';
+          if (b.gallery && b.gallery.length) {
+            b.gallery.forEach(function(img) {
+              bbfAddGalleryThumb(img.id, img.image_path || img.url);
+            });
+          }
+        }
+
+        // Load videos
+        var videoList = document.getElementById('bbf-video-list');
+        if (videoList) {
+          videoList.innerHTML = '';
+          if (b.videos && b.videos.length) {
+            b.videos.forEach(function(v) {
+              bbfAddVideoRow(v.id, v.video_url, v.title || '', v.video_type || 'embed');
+            });
+          }
         }
       }
     });
@@ -608,4 +726,138 @@ function bbfHandleImageDrop(e) {
 document.getElementById('bbf-field-marker_color').addEventListener('input', function() {
   document.getElementById('bbf-field-marker_color_hex').value = this.value;
 });
+
+/* ── Gallery Functions ── */
+
+function bbfUploadGalleryImages(input) {
+  var branchId = document.getElementById('bbf-field-branch_id').value;
+  if (!branchId || branchId === '0') {
+    bbfToast('Bitte zuerst die Filiale speichern, bevor Bilder hochgeladen werden.', 'error');
+    return;
+  }
+  if (!input.files || !input.files.length) return;
+
+  Array.from(input.files).forEach(function(file) {
+    var formData = new FormData();
+    formData.append('image', file);
+    formData.append('branch_id', branchId);
+    formData.append('action', 'uploadGalleryImage');
+    formData.append('is_ajax', '1');
+    formData.append('jtl_token', jtlToken);
+
+    fetch(postURL, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          bbfAddGalleryThumb(data.id, data.url);
+          bbfToast('Bild hochgeladen', 'success');
+        } else {
+          bbfToast(data.message || 'Upload fehlgeschlagen', 'error');
+        }
+      });
+  });
+  input.value = '';
+}
+
+function bbfAddGalleryThumb(id, url) {
+  var grid = document.getElementById('bbf-gallery-grid');
+  var div = document.createElement('div');
+  div.setAttribute('data-gallery-id', id);
+  div.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;';
+  div.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;">' +
+    '<button type="button" onclick="bbfDeleteGalleryImage(' + id + ', this)" ' +
+    'style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.9);color:#fff;border:none;' +
+    'border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;">&times;</button>';
+  grid.appendChild(div);
+}
+
+function bbfDeleteGalleryImage(id, btn) {
+  if (!confirm('Bild wirklich entfernen?')) return;
+  var formData = new FormData();
+  formData.append('action', 'deleteGalleryImage');
+  formData.append('image_id', id);
+  formData.append('is_ajax', '1');
+  formData.append('jtl_token', jtlToken);
+
+  fetch(postURL, { method: 'POST', body: formData })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        var el = btn.closest('[data-gallery-id]');
+        if (el) el.remove();
+        bbfToast('Bild entfernt', 'success');
+      }
+    });
+}
+
+function bbfLoadGallery(branchId) {
+  // Gallery is loaded via the branch data in bbfLoadBranchData
+  var grid = document.getElementById('bbf-gallery-grid');
+  if (grid) grid.innerHTML = '';
+}
+
+/* ── Video Functions ── */
+
+function bbfAddVideo() {
+  var branchId = document.getElementById('bbf-field-branch_id').value;
+  if (!branchId || branchId === '0') {
+    bbfToast('Bitte zuerst die Filiale speichern.', 'error');
+    return;
+  }
+  var urlInput = document.getElementById('bbf-video-url');
+  var titleInput = document.getElementById('bbf-video-title');
+  if (!urlInput.value.trim()) { bbfToast('Bitte Video-URL eingeben', 'error'); return; }
+
+  var formData = new FormData();
+  formData.append('action', 'saveVideo');
+  formData.append('branch_id', branchId);
+  formData.append('video_url', urlInput.value.trim());
+  formData.append('title', titleInput.value.trim());
+  formData.append('is_ajax', '1');
+  formData.append('jtl_token', jtlToken);
+
+  fetch(postURL, { method: 'POST', body: formData })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        bbfAddVideoRow(data.id, urlInput.value.trim(), titleInput.value.trim(), data.video_type || 'embed');
+        urlInput.value = '';
+        titleInput.value = '';
+        bbfToast('Video hinzugefügt', 'success');
+      } else {
+        bbfToast(data.message || 'Fehler', 'error');
+      }
+    });
+}
+
+function bbfAddVideoRow(id, url, title, type) {
+  var list = document.getElementById('bbf-video-list');
+  var div = document.createElement('div');
+  div.setAttribute('data-video-id', id);
+  div.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bbf-border);';
+  var typeLabel = { youtube: 'YouTube', vimeo: 'Vimeo', mp4: 'MP4', embed: 'Embed' };
+  div.innerHTML = '<span class="bbf-badge bbf-badge-info" style="font-size:11px;">' + (typeLabel[type] || type) + '</span>' +
+    '<span style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
+    (title ? '<strong>' + bbfEscape(title) + '</strong> — ' : '') + bbfEscape(url) + '</span>' +
+    '<button type="button" class="bbf-btn-icon bbf-btn-icon-danger bbf-btn-sm" onclick="bbfDeleteVideo(' + id + ', this)">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+  list.appendChild(div);
+}
+
+function bbfDeleteVideo(id, btn) {
+  var formData = new FormData();
+  formData.append('action', 'deleteVideo');
+  formData.append('video_id', id);
+  formData.append('is_ajax', '1');
+  formData.append('jtl_token', jtlToken);
+
+  fetch(postURL, { method: 'POST', body: formData })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        var el = btn.closest('[data-video-id]');
+        if (el) el.remove();
+      }
+    });
+}
 </script>

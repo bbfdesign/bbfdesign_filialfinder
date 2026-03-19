@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="{$adminUrl}css/admin-base.css">
 <link rel="stylesheet" href="{$adminUrl}css/admin.css">
+<link rel="stylesheet" href="{$adminUrl}js/plugin/summernote/summernote-lite.min.css">
 
 {* Hide JTL default plugin header *}
 <style>
@@ -132,6 +133,9 @@
   var adminUrl = "{$adminUrl|escape:'javascript'}";
   var jtlToken = (document.querySelector('[name="jtl_token"]') || {ldelim}{rdelim}).value || '';
 </script>
+
+{* ── Summernote HTML Editor ── *}
+<script src="{$adminUrl}js/plugin/summernote/summernote-lite.min.js"></script>
 
 {* ── Admin JS (jQuery-based navigation, loaded synchronously) ── *}
 <script src="{$adminUrl}js/admin.js"></script>

@@ -90,6 +90,9 @@ function bbfAfterPageLoad(page) {
             try { $.globalEval(this.textContent); } catch (e) { console.warn('BBF script eval:', e); }
         }
     });
+
+    // Init Summernote HTML editors on the page
+    bbfInitSummernote();
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -240,6 +243,52 @@ function bbfSaveLayout() {
     if (!selected) { bbfToast('Bitte Vorlage auswählen', 'error'); return; }
     bbfAjax('saveSettings', { setting_layout_template: selected.value, settings_page: 'layouts' }, function (r) {
         if (r && r.success) bbfToast('Vorlage gespeichert', 'success');
+    });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Summernote HTML Editor
+   ═══════════════════════════════════════════════════════════ */
+
+function bbfInitSummernote() {
+    if (typeof $ === 'undefined' || typeof $.fn.summernote === 'undefined') return;
+
+    // Destroy existing instances first (prevents duplicates on re-load)
+    $('.bbf-summernote').each(function () {
+        if ($(this).next('.note-editor').length) {
+            $(this).summernote('destroy');
+        }
+    });
+
+    $('.bbf-summernote').summernote({
+        height: 200,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        styleTags: ['p', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        callbacks: {
+            onChange: function (contents) {
+                // Sync editor content back to the hidden textarea
+                $(this).val(contents);
+            }
+        }
+    });
+
+    // Style Summernote to match bbf design
+    $('.note-editor').css({
+        'border': '1px solid var(--bbf-border)',
+        'border-radius': 'var(--bbf-card-radius)',
+        'overflow': 'hidden'
+    });
+    $('.note-toolbar').css({
+        'background': 'var(--bbf-input-bg)',
+        'border-bottom': '1px solid var(--bbf-border)'
     });
 }
 
