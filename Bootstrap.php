@@ -11,7 +11,6 @@ use JTL\Smarty\JTLSmarty;
 use Plugin\bbfdesign_filialfinder\src\Controllers\Admin\AdminController;
 use Plugin\bbfdesign_filialfinder\src\Models\Branch;
 use Plugin\bbfdesign_filialfinder\src\Models\Setting;
-use Plugin\bbfdesign_filialfinder\src\Services\ConsentService;
 use Plugin\bbfdesign_filialfinder\src\Services\OpeningStatusService;
 use Plugin\bbfdesign_filialfinder\Smarty\FilialfinderSmartyPlugin;
 
@@ -116,15 +115,6 @@ class Bootstrap extends Bootstrapper
                     }
                 });
 
-                // Register consent vendor
-                $dispatcher->listen('shop.hook.' . \HOOK_SMARTY_OUTPUTFILTER, static function (array $args) use ($plugin, $db, $settings) {
-                    try {
-                        $consentService = new ConsentService($plugin, $db, $settings);
-                        $consentService->registerConsentVendor();
-                    } catch (\Throwable $e) {
-                        // Silent fail
-                    }
-                });
             }
         } catch (\Throwable $e) {
             \error_log('BBF Filialfinder: Bootstrap error - ' . $e->getMessage());

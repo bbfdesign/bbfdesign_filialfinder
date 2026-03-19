@@ -71,7 +71,7 @@ class FilialfinderSmartyPlugin
         $branchModel = new Branch($db);
         $branchService = new BranchService($db);
         $statusService = new OpeningStatusService($settings);
-        $consentService = new ConsentService($plugin, $db, $settings);
+        $consentService = new ConsentService($settings);
 
         // Parse parameters
         $layout = $params['layout'] ?? $allSettings['layout_template'] ?? 'default';

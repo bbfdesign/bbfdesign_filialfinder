@@ -99,13 +99,30 @@ class BbfFilialfinder extends Portlet
             }
             unset($branch);
 
+            // Resolve plugin paths for asset URLs in the template
+            $pluginFrontendUrl = '';
+            $pluginBaseUrl = '';
+            $plugin = \JTL\Plugin\Helper::getPluginById('bbfdesign_filialfinder');
+            if ($plugin) {
+                $pluginFrontendUrl = $plugin->getPaths()->getFrontendURL();
+                $pluginBaseUrl = $plugin->getPaths()->getBaseURL();
+            }
+
             return [
-                'branches' => $branches,
-                'settings' => $allSettings,
-                'layout'   => $instance->getProperty('layout') ?: 'default',
+                'branches'         => $branches,
+                'settings'         => $allSettings,
+                'layout'           => $instance->getProperty('layout') ?: 'default',
+                'pluginFrontendUrl' => $pluginFrontendUrl,
+                'pluginBaseUrl'     => $pluginBaseUrl,
             ];
         } catch (\Throwable $e) {
-            return ['branches' => [], 'settings' => [], 'layout' => 'default'];
+            return [
+                'branches'          => [],
+                'settings'          => [],
+                'layout'            => 'default',
+                'pluginFrontendUrl' => '',
+                'pluginBaseUrl'     => '',
+            ];
         }
     }
 }
