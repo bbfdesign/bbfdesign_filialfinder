@@ -255,11 +255,11 @@ class AdminController
         $branches = $this->branchModel->getAll();
 
         $this->smarty->assign([
-            'calendars'   => $calendars,
-            'holidays'    => $holidays,
-            'upcoming'    => $upcoming,
-            'openSundays' => $openSundays,
-            'branches'    => $branches,
+            'calendars'        => $calendars,
+            'holidays'         => $holidays,
+            'upcomingHolidays' => $upcoming,
+            'openSundays'      => $openSundays,
+            'branches'         => $branches,
         ]);
     }
 

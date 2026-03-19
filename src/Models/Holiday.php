@@ -38,7 +38,20 @@ class Holiday
             2
         );
 
-        return is_array($rows) ? $rows : [];
+        return is_array($rows) ? array_map([$this, 'enrichHoliday'], $rows) : [];
+    }
+
+    /**
+     * Add computed properties to a holiday record.
+     */
+    private function enrichHoliday(object $holiday): object
+    {
+        $today = date('Y-m-d');
+        $holiday->is_past = ($holiday->date < $today);
+        $holiday->is_future = ($holiday->date >= $today);
+        $holiday->scope = ((int)($holiday->applies_to_all ?? 1) === 1) ? 'all' : 'selected';
+        $holiday->is_closed_display = ((int)($holiday->default_closed ?? 1) === 1 && (int)($holiday->open_override ?? 0) === 0);
+        return $holiday;
     }
 
     /**
@@ -157,7 +170,7 @@ class Holiday
             2
         );
 
-        return is_array($rows) ? $rows : [];
+        return is_array($rows) ? array_map([$this, 'enrichHoliday'], $rows) : [];
     }
 
     /**
@@ -179,7 +192,7 @@ class Holiday
             2
         );
 
-        return is_array($rows) ? $rows : [];
+        return is_array($rows) ? array_map([$this, 'enrichHoliday'], $rows) : [];
     }
 
     /**
