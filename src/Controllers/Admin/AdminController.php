@@ -585,8 +585,8 @@ class AdminController
     {
         $data = [
             'id'        => (int)($_POST['calendar_id'] ?? 0),
-            'name'      => trim($_POST['name'] ?? ''),
-            'ical_url'  => trim($_POST['ical_url'] ?? ''),
+            'name'      => trim($_POST['calendar_name'] ?? $_POST['name'] ?? ''),
+            'ical_url'  => trim($_POST['calendar_url'] ?? $_POST['ical_url'] ?? ''),
             'is_active' => (int)($_POST['is_active'] ?? 1),
         ];
 

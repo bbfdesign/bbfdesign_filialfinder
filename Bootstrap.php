@@ -28,10 +28,13 @@ class Bootstrap extends Bootstrapper
             $plugin = $this->getPlugin();
             $db = Shop::Container()->getDB();
 
-            // Check if our settings table exists (migration may not have run yet)
-            try {
-                $db->queryPrepared('SELECT 1 FROM `bbf_filialfinder_settings` LIMIT 1', [], 1);
-            } catch (\Throwable $e) {
+            // Check if our tables exist — use information_schema to avoid JTL error logging
+            $tableCheck = $db->queryPrepared(
+                "SELECT COUNT(*) AS cnt FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'bbf_filialfinder_settings'",
+                [],
+                1
+            );
+            if (!$tableCheck || (int)$tableCheck->cnt === 0) {
                 // Tables don't exist yet — skip all boot logic
                 return;
             }
@@ -196,6 +199,9 @@ class Bootstrap extends Bootstrapper
                 session_write_close();
             }
 
+            // Safety net: ensure tables exist before any DB access
+            $this->ensureTables($db);
+
             register_shutdown_function(static function () {
                 $error = error_get_last();
                 if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR])) {
@@ -231,6 +237,7 @@ class Bootstrap extends Bootstrapper
         }
 
         // === NORMAL PAGE RENDER ===
+        $this->ensureTables($db);
         $settings = new Setting($db);
         $smarty->assign([
             'plugin'        => $plugin,

@@ -560,6 +560,8 @@ function bbfSaveCalendar() {
       bbfToast(r.message || 'Kalender gespeichert', 'success');
       bbfHideCalendarForm();
       if (typeof getPage === 'function') getPage('holidays');
+    } else if (r && r.errors && r.errors.length) {
+      r.errors.forEach(function(e) { bbfToast(e, 'error'); });
     } else {
       bbfToast((r && r.message) || 'Fehler beim Speichern', 'error');
     }
