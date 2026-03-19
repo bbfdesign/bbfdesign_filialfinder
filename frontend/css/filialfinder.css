@@ -147,16 +147,18 @@
    6. Default Layout — Map & List Side by Side
    ========================================================================== */
 
-.bbf-filialfinder-content {
+.bbf-filialfinder-layout--default {
     display: flex;
     gap: 1.25rem;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
-/* --- Branch List (left sidebar) --- */
+.bbf-filialfinder-list-col {
+    flex: 0 0 380px;
+    min-width: 0;
+}
 
 .bbf-filialfinder-list {
-    flex: 0 0 380px;
     max-height: 500px;
     overflow-y: auto;
     display: flex;
@@ -170,16 +172,43 @@
 .bbf-filialfinder-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 .bbf-filialfinder-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* --- Map --- */
+.bbf-filialfinder-map-col {
+    flex: 1 1 auto;
+    min-width: 0;
+}
 
 .bbf-filialfinder-map {
-    flex: 1 1 auto;
+    width: 100%;
     min-height: 300px;
     height: 500px;
     border-radius: var(--bbf-ff-radius);
     overflow: hidden;
     background: #e2e8f0;
     position: relative;
+}
+
+.bbf-filialfinder-map-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+    color: var(--bbf-ff-muted);
+    font-size: 0.875rem;
+}
+
+.bbf-filialfinder-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--bbf-ff-border);
+    border-top-color: var(--bbf-ff-primary);
+    border-radius: 50%;
+    animation: bbf-spin 0.7s linear infinite;
+}
+
+@keyframes bbf-spin {
+    to { transform: rotate(360deg); }
 }
 
 /* ==========================================================================
@@ -212,7 +241,7 @@
     box-shadow: var(--bbf-ff-shadow-lg);
 }
 
-.bbf-filialfinder-card__name {
+.bbf-filialfinder-card-name {
     font-size: 1rem;
     font-weight: 700;
     color: var(--bbf-ff-secondary);
@@ -220,15 +249,15 @@
     line-height: 1.35;
 }
 
-.bbf-filialfinder-card__address {
+.bbf-filialfinder-card-address {
     font-size: 0.8125rem;
     color: var(--bbf-ff-muted);
     margin: 0 0 0.375rem;
     line-height: 1.5;
 }
 
-.bbf-filialfinder-card__phone,
-.bbf-filialfinder-card__email {
+.bbf-filialfinder-card-phone,
+.bbf-filialfinder-card-email {
     display: inline-block;
     font-size: 0.8125rem;
     color: var(--bbf-ff-primary);
@@ -237,13 +266,13 @@
     transition: color var(--bbf-ff-transition);
 }
 
-.bbf-filialfinder-card__phone:hover,
-.bbf-filialfinder-card__email:hover {
+.bbf-filialfinder-card-phone:hover,
+.bbf-filialfinder-card-email:hover {
     color: var(--bbf-ff-secondary);
     text-decoration: underline;
 }
 
-.bbf-filialfinder-card__distance {
+.bbf-filialfinder-card-distance {
     display: inline-block;
     font-size: 0.75rem;
     font-weight: 600;
@@ -254,7 +283,7 @@
     margin-top: 0.375rem;
 }
 
-.bbf-filialfinder-card__footer {
+.bbf-filialfinder-card-footer {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -301,7 +330,7 @@
 
 /* Pulse dot */
 
-.bbf-filialfinder-status__dot {
+.bbf-filialfinder-status-dot {
     display: inline-block;
     width: 8px;
     height: 8px;
@@ -354,6 +383,134 @@
     color: var(--bbf-ff-primary);
 }
 
+.bbf-filialfinder-btn--route {
+    color: #fff;
+    background: var(--bbf-ff-primary);
+    border: 1px solid var(--bbf-ff-primary);
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.bbf-filialfinder-btn--route:hover {
+    opacity: 0.85;
+    color: #fff;
+    text-decoration: none;
+}
+
+.bbf-filialfinder-btn--info {
+    color: var(--bbf-ff-text);
+    background: transparent;
+    border: 1px solid var(--bbf-ff-border);
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.bbf-filialfinder-btn--info:hover {
+    border-color: var(--bbf-ff-primary);
+    color: var(--bbf-ff-primary);
+}
+
+.bbf-filialfinder-btn--sm {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+/* Card sub-elements */
+.bbf-filialfinder-card-body {
+    /* No special styles needed, card padding handles it */
+}
+
+.bbf-filialfinder-card-actions {
+    margin-top: 0.625rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.bbf-filialfinder-card-image {
+    overflow: hidden;
+    border-radius: var(--bbf-ff-radius) var(--bbf-ff-radius) 0 0;
+}
+
+.bbf-filialfinder-card-image img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+}
+
+/* Status sub-elements */
+.bbf-filialfinder-status-text {
+    /* inline, inherits badge styles */
+}
+
+.bbf-filialfinder-status-next {
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.bbf-filialfinder-card-distance:empty {
+    display: none;
+}
+
+/* Grid map below grid */
+.bbf-filialfinder-grid-map {
+    margin-top: 1.25rem;
+}
+
+/* Table wrapper */
+.bbf-filialfinder-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bbf-filialfinder-table-map {
+    margin-bottom: 1.25rem;
+}
+
+/* Table responsive */
+.bbf-filialfinder-table-row--active {
+    background: rgba(200, 184, 49, 0.08) !important;
+}
+
+/* Slidein panel for map_only */
+.bbf-filialfinder-slidein {
+    position: absolute;
+    top: 0;
+    right: -350px;
+    width: 340px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    padding: 1rem;
+}
+
+.bbf-filialfinder-slidein[aria-hidden="false"] {
+    right: 0;
+}
+
+.bbf-filialfinder-slidein-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--bbf-ff-muted);
+    line-height: 1;
+}
+
+/* Map Only layout needs relative position for slidein */
+.bbf-filialfinder-layout--map-only {
+    position: relative;
+    overflow: hidden;
+}
+
 /* ==========================================================================
    10. Directions Link
    ========================================================================== */
@@ -387,13 +544,13 @@
    11. Grid Layout
    ========================================================================== */
 
-.bbf-filialfinder-grid {
+.bbf-filialfinder-layout--grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.25rem;
 }
 
-.bbf-filialfinder-grid__card {
+.bbf-filialfinder-grid-item {
     background: var(--bbf-ff-bg);
     border: 1px solid var(--bbf-ff-border);
     border-radius: var(--bbf-ff-radius);
@@ -403,12 +560,12 @@
         transform var(--bbf-ff-transition);
 }
 
-.bbf-filialfinder-grid__card:hover {
+.bbf-filialfinder-grid-item:hover {
     box-shadow: var(--bbf-ff-shadow-lg);
     transform: translateY(-3px);
 }
 
-.bbf-filialfinder-grid__image {
+.bbf-filialfinder-card-image img {
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
@@ -416,19 +573,19 @@
     background: #e2e8f0;
 }
 
-.bbf-filialfinder-grid__body {
+.bbf-filialfinder-card--grid .bbf-filialfinder-card-body {
     padding: 1rem;
 }
 
-.bbf-filialfinder-grid__body .bbf-filialfinder-card__name {
+.bbf-filialfinder-card--grid .bbf-filialfinder-card-body .bbf-filialfinder-card-name {
     margin-bottom: 0.25rem;
 }
 
-.bbf-filialfinder-grid__body .bbf-filialfinder-card__address {
+.bbf-filialfinder-card--grid .bbf-filialfinder-card-body .bbf-filialfinder-card-address {
     margin-bottom: 0.5rem;
 }
 
-.bbf-filialfinder-grid__footer {
+.bbf-filialfinder-card-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -457,25 +614,25 @@
     gap: 0;
 }
 
-.bbf-filialfinder-accordion__item {
+.bbf-filialfinder-accordion-item {
     border: 1px solid var(--bbf-ff-border);
     border-bottom: none;
 }
 
-.bbf-filialfinder-accordion__item:first-child {
+.bbf-filialfinder-accordion-item:first-child {
     border-radius: var(--bbf-ff-radius) var(--bbf-ff-radius) 0 0;
 }
 
-.bbf-filialfinder-accordion__item:last-child {
+.bbf-filialfinder-accordion-item:last-child {
     border-bottom: 1px solid var(--bbf-ff-border);
     border-radius: 0 0 var(--bbf-ff-radius) var(--bbf-ff-radius);
 }
 
-.bbf-filialfinder-accordion__item:only-child {
+.bbf-filialfinder-accordion-item:only-child {
     border-radius: var(--bbf-ff-radius);
 }
 
-.bbf-filialfinder-accordion__header {
+.bbf-filialfinder-accordion-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -493,11 +650,11 @@
     border-left: 3px solid var(--bbf-ff-primary);
 }
 
-.bbf-filialfinder-accordion__header:hover {
+.bbf-filialfinder-accordion-header:hover {
     background: #f1f5f9;
 }
 
-.bbf-filialfinder-accordion__header::after {
+.bbf-filialfinder-accordion-header::after {
     content: "";
     display: inline-block;
     width: 8px;
@@ -510,20 +667,48 @@
     margin-left: 1rem;
 }
 
-.bbf-filialfinder-accordion__item--open .bbf-filialfinder-accordion__header::after {
+.bbf-filialfinder-accordion-header[aria-expanded="true"]::after {
     transform: rotate(-135deg);
 }
 
-.bbf-filialfinder-accordion__body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-    padding: 0 1rem;
+.bbf-filialfinder-accordion-icon svg {
+    transition: transform 0.2s ease;
 }
 
-.bbf-filialfinder-accordion__item--open .bbf-filialfinder-accordion__body {
-    max-height: 500px;
+.bbf-filialfinder-accordion-header[aria-expanded="true"] .bbf-filialfinder-accordion-icon svg {
+    transform: rotate(180deg);
+}
+
+.bbf-filialfinder-accordion-content {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.bbf-filialfinder-accordion-details {
+    flex: 1;
+    min-width: 200px;
+}
+
+.bbf-filialfinder-accordion-map {
+    flex: 0 0 300px;
+}
+
+.bbf-filialfinder-minimap {
+    border-radius: var(--bbf-ff-radius);
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.bbf-filialfinder-accordion-body {
+    display: none;
     padding: 1rem;
+    border-top: 1px solid var(--bbf-ff-border);
+}
+
+.bbf-filialfinder-accordion-body[aria-hidden="false"],
+.bbf-filialfinder-accordion-body[style*="display: block"] {
+    display: block;
 }
 
 /* ==========================================================================
@@ -625,7 +810,7 @@
     color: var(--bbf-ff-muted);
 }
 
-.bbf-filialfinder-consent-placeholder__icon {
+.bbf-filialfinder-consent-placeholder-icon {
     font-size: 2rem;
     margin-bottom: 0.75rem;
     opacity: 0.5;
@@ -656,17 +841,17 @@
     padding: 0.25rem;
 }
 
-.bbf-filialfinder-info-window .bbf-filialfinder-card__name {
+.bbf-filialfinder-info-window .bbf-filialfinder-card-name {
     font-size: 0.9375rem;
     margin-bottom: 0.2rem;
 }
 
-.bbf-filialfinder-info-window .bbf-filialfinder-card__address {
+.bbf-filialfinder-info-window .bbf-filialfinder-card-address {
     margin-bottom: 0.4rem;
 }
 
-.bbf-filialfinder-info-window .bbf-filialfinder-card__phone,
-.bbf-filialfinder-info-window .bbf-filialfinder-card__email {
+.bbf-filialfinder-info-window .bbf-filialfinder-card-phone,
+.bbf-filialfinder-info-window .bbf-filialfinder-card-email {
     display: block;
     margin: 0.15rem 0;
 }
@@ -712,28 +897,42 @@
    ========================================================================== */
 
 @media (max-width: 992px) {
-    .bbf-filialfinder-content {
+    .bbf-filialfinder-layout--default {
         flex-direction: column;
     }
 
-    .bbf-filialfinder-list {
+    .bbf-filialfinder-list-col {
         flex: none;
         width: 100%;
-        max-height: 340px;
         order: 2;
-        padding-right: 0;
     }
 
-    .bbf-filialfinder-map {
+    .bbf-filialfinder-list {
+        max-height: 340px;
+    }
+
+    .bbf-filialfinder-map-col {
         flex: none;
         width: 100%;
-        min-height: 350px;
-        height: 380px;
         order: 1;
     }
 
-    .bbf-filialfinder-grid {
+    .bbf-filialfinder-map {
+        min-height: 350px;
+        height: 380px;
+    }
+
+    .bbf-filialfinder-layout--grid {
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+
+    .bbf-filialfinder-accordion-content {
+        flex-direction: column;
+    }
+
+    .bbf-filialfinder-accordion-map {
+        flex: none;
+        width: 100%;
     }
 }
 
@@ -773,35 +972,41 @@
         margin-top: 0.5rem;
     }
 
-    .bbf-filialfinder-content {
+    .bbf-filialfinder-layout--default {
         flex-direction: column;
         gap: 1rem;
     }
 
-    .bbf-filialfinder-list {
+    .bbf-filialfinder-list-col {
         flex: none;
         width: 100%;
-        max-height: 280px;
         order: 2;
     }
 
-    .bbf-filialfinder-map {
+    .bbf-filialfinder-list {
+        max-height: 280px;
+    }
+
+    .bbf-filialfinder-map-col {
         flex: none;
         width: 100%;
+        order: 1;
+    }
+
+    .bbf-filialfinder-map {
         min-height: 240px;
         height: 280px;
-        order: 1;
     }
 
     .bbf-filialfinder-card {
         padding: 0.75rem 0.875rem;
     }
 
-    .bbf-filialfinder-card__name {
+    .bbf-filialfinder-card-name {
         font-size: 0.9375rem;
     }
 
-    .bbf-filialfinder-grid {
+    .bbf-filialfinder-layout--grid {
         grid-template-columns: 1fr;
     }
 
@@ -823,7 +1028,7 @@
         max-width: 200px;
     }
 
-    .bbf-filialfinder-accordion__header {
+    .bbf-filialfinder-accordion-header {
         font-size: 0.875rem;
         padding: 0.75rem 0.875rem;
     }
