@@ -99,23 +99,34 @@ class BbfFilialfinder extends Portlet
             }
             unset($branch);
 
-            // Resolve plugin paths — use $this->plugin (inherited from Portlet)
+            // Resolve plugin paths — multiple fallback strategies
             $pluginFrontendUrl = '';
             $pluginBaseUrl = '';
+
+            // Strategy 1: $this->plugin (inherited from Portlet base class)
             try {
                 if (isset($this->plugin) && $this->plugin !== null) {
                     $pluginFrontendUrl = $this->plugin->getPaths()->getFrontendURL();
                     $pluginBaseUrl = $this->plugin->getPaths()->getBaseURL();
                 }
-            } catch (\Throwable $e) {
-                // Fallback: try Helper
+            } catch (\Throwable $e) {}
+
+            // Strategy 2: Helper::getPluginById
+            if (empty($pluginFrontendUrl)) {
                 try {
                     $p = \JTL\Plugin\Helper::getPluginById('bbfdesign_filialfinder');
                     if ($p) {
                         $pluginFrontendUrl = $p->getPaths()->getFrontendURL();
                         $pluginBaseUrl = $p->getPaths()->getBaseURL();
                     }
-                } catch (\Throwable $e2) {}
+                } catch (\Throwable $e) {}
+            }
+
+            // Strategy 3: Build URL from Shop::getURL() (always works)
+            if (empty($pluginFrontendUrl)) {
+                $shopUrl = rtrim(Shop::getURL(), '/');
+                $pluginBaseUrl = $shopUrl . '/plugins/bbfdesign_filialfinder/';
+                $pluginFrontendUrl = $pluginBaseUrl . 'frontend/';
             }
 
             return [

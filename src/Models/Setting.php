@@ -72,6 +72,30 @@ class Setting
         'status_timezone'        => 'Europe/Berlin',
         'status_animated_dot'    => '1',
 
+        // Card Display (what to show in branch cards)
+        'card_show_address'      => '1',
+        'card_show_phone'        => '1',
+        'card_show_email'        => '0',
+        'card_show_website'      => '0',
+        'card_show_status'       => '1',
+        'card_show_hours'        => '1',
+        'card_show_distance'     => '1',
+        'card_show_route_btn'    => '1',
+        'card_show_detail_btn'   => '1',
+        'card_show_image'        => '1',
+        'card_show_country'      => '0',
+        'card_show_description'  => '0',
+        'card_detail_btn_text'   => 'Details anzeigen',
+        'card_route_btn_text'    => 'Route berechnen',
+
+        // Map Popup (what to show in map marker popup)
+        'popup_show_address'     => '1',
+        'popup_show_phone'       => '1',
+        'popup_show_email'       => '0',
+        'popup_show_status'      => '1',
+        'popup_show_hours'       => '1',
+        'popup_show_route_btn'   => '1',
+
         // Consent
         'consent_enabled'        => '1',
         'consent_placeholder_text' => '',

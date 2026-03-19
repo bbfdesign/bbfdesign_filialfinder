@@ -18,13 +18,20 @@
     {assign var=ffBaseUrl value=$ffData.pluginBaseUrl|default:''}
     {assign var=ffInstanceId value=$instance->getId()|default:($smarty.now|md5|truncate:8:'')}
 
-    {* ===== Frontend CSS (loaded via BbfFilialfinder.css auto-load by JTL) ===== *}
-    {* Fallback: explicit link if auto-load doesn't work *}
+    {* ===== Frontend CSS ===== *}
+    <!-- bbf-debug: ffPluginUrl={$ffPluginUrl|escape:'html'} ffBaseUrl={$ffBaseUrl|escape:'html'} -->
     {if $ffPluginUrl}
         <link rel="stylesheet" href="{$ffPluginUrl}css/filialfinder.css">
+    {else}
+        {* Hardcoded fallback if plugin URL resolution failed *}
+        <link rel="stylesheet" href="/plugins/bbfdesign_filialfinder/frontend/css/filialfinder.css">
     {/if}
-    {if $ffProvider === 'osm' && $ffBaseUrl}
-        <link rel="stylesheet" href="{$ffBaseUrl}vendor/leaflet/leaflet.css">
+    {if $ffProvider === 'osm'}
+        {if $ffBaseUrl}
+            <link rel="stylesheet" href="{$ffBaseUrl}vendor/leaflet/leaflet.css">
+        {else}
+            <link rel="stylesheet" href="/plugins/bbfdesign_filialfinder/vendor/leaflet/leaflet.css">
+        {/if}
     {/if}
 
     {* ===== Dynamic CSS variables from plugin settings ===== *}
@@ -479,21 +486,17 @@
     {if $ffProvider === 'osm'}
         {if $ffBaseUrl}
             <script src="{$ffBaseUrl}vendor/leaflet/leaflet.js"></script>
+        {else}
+            <script src="/plugins/bbfdesign_filialfinder/vendor/leaflet/leaflet.js"></script>
         {/if}
-        {* Fallback: if Leaflet not loaded from local, load from unpkg (DSGVO: only after consent) *}
+        {* CDN Fallback: if local Leaflet failed to load *}
         <script>
         if (typeof L === 'undefined') {
-            var s = document.createElement('script');
-            s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            s.onload = function() {
-                if (typeof L !== 'undefined') document.dispatchEvent(new Event('bbf-leaflet-ready'));
-            };
-            document.head.appendChild(s);
+            document.write('<scr' + 'ipt src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/scr' + 'ipt>');
             if (!document.querySelector('link[href*="leaflet.css"]')) {
-                var c = document.createElement('link');
-                c.rel = 'stylesheet';
-                c.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                document.head.appendChild(c);
+                var _c = document.createElement('link'); _c.rel = 'stylesheet';
+                _c.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                document.head.appendChild(_c);
             }
         }
         </script>

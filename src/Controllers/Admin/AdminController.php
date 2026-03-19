@@ -161,6 +161,7 @@ class AdminController
             'geolocation'    => $this->assignGeolocationData(),
             'performance'    => $this->assignPerformanceData(),
             'holidays'       => $this->assignHolidayData(),
+            'card_display'   => null, // settings already assigned globally
             'modal_settings' => null, // settings already assigned globally
             'import_export'  => $this->assignImportExportData(),
             'documentation'  => null,
