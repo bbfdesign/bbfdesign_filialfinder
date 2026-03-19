@@ -1,0 +1,210 @@
+/**
+ * God of Games – Filialfinder Custom CSS
+ * Dieses CSS in den Plugin CSS-Editor einfügen unter:
+ * BBF Filialfinder → CSS-Editor → Benutzerdefiniertes CSS
+ *
+ * Primärfarbe: Olive/Gold (#9b8b2c) passend zur GoG CI
+ */
+
+/* ── Farbvariablen überschreiben ── */
+.bbf-filialfinder-wrapper {
+    --bbf-ff-primary: #9b8b2c;
+    --bbf-ff-secondary: #1a1a1a;
+    --bbf-ff-bg: #ffffff;
+    --bbf-ff-text: #333333;
+    --bbf-ff-border: #e0ddd4;
+    --bbf-ff-muted: #777777;
+    --bbf-ff-open: #2d8a4e;
+    --bbf-ff-closed: #c0392b;
+    --bbf-ff-radius: 6px;
+    --bbf-ff-shadow: 0 2px 8px rgba(155, 139, 44, 0.12);
+    --bbf-ff-shadow-lg: 0 8px 24px rgba(155, 139, 44, 0.18);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Überschrift ── */
+.bbf-filialfinder-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1a1a1a;
+}
+
+/* ── Filial-Karten ── */
+.bbf-filialfinder-card {
+    border: 1px solid #e0ddd4;
+    border-left: 4px solid #9b8b2c;
+    border-radius: 6px;
+    padding: 14px 16px;
+    background: #ffffff;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.bbf-filialfinder-card:hover {
+    box-shadow: 0 4px 16px rgba(155, 139, 44, 0.15);
+    transform: translateY(-2px);
+}
+
+.bbf-filialfinder-card--active {
+    border-left-color: #9b8b2c;
+    background: #faf9f2;
+    box-shadow: 0 4px 16px rgba(155, 139, 44, 0.2);
+}
+
+.bbf-filialfinder-card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 6px;
+}
+
+.bbf-filialfinder-card-address {
+    font-size: 0.8rem;
+    color: #666666;
+    margin: 0 0 6px;
+    line-height: 1.5;
+}
+
+.bbf-filialfinder-card-phone a,
+.bbf-filialfinder-card-email a {
+    color: #9b8b2c;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.bbf-filialfinder-card-phone a:hover,
+.bbf-filialfinder-card-email a:hover {
+    color: #7a6e22;
+    text-decoration: underline;
+}
+
+/* ── Öffnungsstatus ── */
+.bbf-filialfinder-status {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+}
+
+.bbf-filialfinder-status--open {
+    background: #e8f5e9;
+    color: #2d8a4e;
+}
+
+.bbf-filialfinder-status--closed {
+    background: #fce4e4;
+    color: #c0392b;
+}
+
+.bbf-filialfinder-status--closing {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.bbf-filialfinder-status--opening {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+/* ── Animierter Status-Punkt ── */
+.bbf-filialfinder-status-dot {
+    width: 7px;
+    height: 7px;
+}
+
+/* ── Buttons ── */
+.bbf-filialfinder-btn--route {
+    background: #9b8b2c;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.bbf-filialfinder-btn--route:hover {
+    background: #7a6e22;
+    color: #ffffff;
+}
+
+/* ── Karte ── */
+.bbf-filialfinder-map {
+    border-radius: 8px;
+    border: 1px solid #e0ddd4;
+}
+
+/* ── Layout Default: Side by Side ── */
+.bbf-filialfinder-layout--default {
+    gap: 20px;
+}
+
+.bbf-filialfinder-list-col {
+    flex: 0 0 360px;
+}
+
+.bbf-filialfinder-list {
+    gap: 10px;
+    max-height: 520px;
+}
+
+/* ── Öffnungszeiten in der Karte (Popup) ── */
+.leaflet-popup-content {
+    font-family: inherit;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #333;
+    margin: 10px 14px;
+}
+
+.leaflet-popup-content strong {
+    font-size: 0.9rem;
+    color: #1a1a1a;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Grid Layout ── */
+.bbf-filialfinder-layout--grid {
+    gap: 16px;
+}
+
+.bbf-filialfinder-card--grid {
+    border-left: none;
+    border-top: 3px solid #9b8b2c;
+}
+
+/* ── Tabelle ── */
+.bbf-filialfinder-table thead th {
+    background: #9b8b2c;
+    color: #ffffff;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+}
+
+/* ── Consent Placeholder ── */
+.bbf-filialfinder-consent-placeholder {
+    background: #faf9f2;
+    border-color: #e0ddd4;
+}
+
+/* ── No Results ── */
+.bbf-filialfinder-no-results {
+    color: #999;
+    font-style: italic;
+}
+
+/* ── Responsive Anpassungen ── */
+@media (max-width: 992px) {
+    .bbf-filialfinder-list-col {
+        flex: none;
+    }
+}
