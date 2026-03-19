@@ -11,6 +11,40 @@
     <Version>1.0.0</Version>
     <CreateDate>2026-03-19</CreateDate>
     <Install>
+        <ServicesRequiringConsent>
+            <Vendor>
+                <ID>bbf_filialfinder_osm</ID>
+                <Company>OpenStreetMap Foundation</Company>
+                <Localization iso="GER">
+                    <Name>OpenStreetMap</Name>
+                    <Purpose>Kartenanzeige</Purpose>
+                    <Description>OpenStreetMap wird verwendet, um interaktive Karten mit Filialstandorten anzuzeigen. Dabei werden Kartendaten von externen Tile-Servern geladen.</Description>
+                    <PrivacyPolicy>https://wiki.osmfoundation.org/wiki/Privacy_Policy</PrivacyPolicy>
+                </Localization>
+                <Localization iso="ENG">
+                    <Name>OpenStreetMap</Name>
+                    <Purpose>Map Display</Purpose>
+                    <Description>OpenStreetMap is used to display interactive maps with store locations. Map data is loaded from external tile servers.</Description>
+                    <PrivacyPolicy>https://wiki.osmfoundation.org/wiki/Privacy_Policy</PrivacyPolicy>
+                </Localization>
+            </Vendor>
+            <Vendor>
+                <ID>bbf_filialfinder_google</ID>
+                <Company>Google LLC</Company>
+                <Localization iso="GER">
+                    <Name>Google Maps</Name>
+                    <Purpose>Kartenanzeige</Purpose>
+                    <Description>Google Maps wird verwendet, um interaktive Karten mit Filialstandorten anzuzeigen. Dabei werden Daten an Google uebermittelt.</Description>
+                    <PrivacyPolicy>https://policies.google.com/privacy</PrivacyPolicy>
+                </Localization>
+                <Localization iso="ENG">
+                    <Name>Google Maps</Name>
+                    <Purpose>Map Display</Purpose>
+                    <Description>Google Maps is used to display interactive maps with store locations. Data is transmitted to Google.</Description>
+                    <PrivacyPolicy>https://policies.google.com/privacy</PrivacyPolicy>
+                </Localization>
+            </Vendor>
+        </ServicesRequiringConsent>
         <Portlets>
             <Portlet>
                 <Title>BBF Filialfinder</Title>
