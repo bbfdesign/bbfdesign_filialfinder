@@ -87,9 +87,9 @@ class Branch
         unset($data['id']);
 
         $fields = [
-            'name', 'description', 'image_path', 'street', 'zip', 'city', 'country',
+            'name', 'description', 'description_html', 'image_path', 'street', 'zip', 'city', 'country',
             'phone', 'email', 'website', 'latitude', 'longitude', 'google_place_id',
-            'marker_color', 'css_class', 'sort_order', 'is_active',
+            'marker_color', 'css_class', 'tags', 'sort_order', 'is_active',
         ];
 
         $filtered = [];
@@ -214,6 +214,42 @@ class Branch
         }
 
         return $newId;
+    }
+
+    /**
+     * Get all unique tags across all branches.
+     * @return string[]
+     */
+    public function getAllTags(): array
+    {
+        $rows = $this->db->queryPrepared(
+            'SELECT `tags` FROM `' . self::TABLE . '` WHERE `tags` IS NOT NULL AND `tags` != \'\'',
+            [],
+            2
+        );
+        $allTags = [];
+        foreach ($rows as $row) {
+            $tags = json_decode($row->tags, true);
+            if (is_array($tags)) {
+                $allTags = array_merge($allTags, $tags);
+            }
+        }
+        return array_values(array_unique($allTags));
+    }
+
+    /**
+     * Get branches by tag.
+     * @return object[]
+     */
+    public function getByTag(string $tag): array
+    {
+        // JSON search - finds branches where tags JSON array contains the tag
+        $rows = $this->db->queryPrepared(
+            'SELECT * FROM `' . self::TABLE . '` WHERE `is_active` = 1 AND JSON_CONTAINS(`tags`, :tag) ORDER BY `sort_order` ASC',
+            ['tag' => json_encode($tag)],
+            2
+        );
+        return is_array($rows) ? $rows : [];
     }
 
     /**

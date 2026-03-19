@@ -91,6 +91,42 @@ class Setting
         'performance_selective_loading' => '0',
         'performance_footer_scripts' => '1',
         'performance_image_optimization' => '0',
+
+        // Holidays
+        'holidays_enabled'              => '1',
+        'holidays_show_in_hours'        => '1',
+        'holidays_highlight_open_sundays' => '1',
+        'holidays_highlight_color'      => '#e8420a',
+        'holidays_auto_sync'            => '0',
+        'holidays_sync_interval'        => 'weekly',
+
+        // Modal
+        'modal_enabled'                 => '1',
+        'modal_trigger'                 => 'button',
+        'modal_button_text'             => 'Details anzeigen',
+        'modal_show_gallery'            => '1',
+        'modal_show_videos'             => '1',
+        'modal_show_description'        => '1',
+        'modal_show_hours'              => '1',
+        'modal_show_map'                => '1',
+        'modal_show_directions'         => '1',
+        'modal_width'                   => 'medium',
+        'modal_animation'               => 'fade',
+        'modal_overlay_color'           => '#000000',
+        'modal_overlay_opacity'         => '50',
+        'modal_max_images'              => '10',
+        'modal_image_quality'           => 'high',
+        'modal_lightbox'                => '1',
+        'modal_youtube_privacy'         => '1',
+
+        // Frontend Search/Filter
+        'frontend_search_enabled'       => '0',
+        'frontend_search_by_zip'        => '1',
+        'frontend_search_by_city'       => '1',
+        'frontend_search_by_country'    => '1',
+        'frontend_search_by_tags'       => '1',
+        'frontend_filter_style'         => 'bar',
+        'frontend_tag_filter_style'     => 'chips',
     ];
 
     public function __construct(
