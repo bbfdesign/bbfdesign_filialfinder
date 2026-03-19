@@ -1,110 +1,133 @@
 /**
- * BBF Filialfinder – Admin Alpine.js Application
+ * BBF Filialfinder – Admin JS
+ * Uses jQuery (available in JTL admin) + data-page pattern (proven in bbfdesign_search)
  */
 
-function bbfFilialfinder() {
-    return {
-        page: 'branches',
-        pageContent: '',
-        sidebarOpen: false,
-        loading: false,
+$(document).ready(function () {
 
-        init() {
-            this.loadPage('branches');
+    // ── Sidebar Navigation (data-page click handler) ──
+    $('.bbf-sidebar-nav a[data-page]').on('click', function (e) {
+        e.preventDefault();
+        var page = $(this).data('page');
+        getPage(page);
+    });
 
-            // Restore sidebar state
-            try {
-                if (localStorage.getItem('bbf_ff_sidebar') === 'collapsed') {
-                    var sidebar = document.getElementById('bbf-sidebar');
-                    if (sidebar) sidebar.classList.add('bbf-sidebar-collapsed');
-                }
-            } catch(e) {}
-        },
-
-        loadPage(pageName) {
-            this.page = pageName;
-            this.loading = true;
-            this.sidebarOpen = false;
-
-            var container = document.getElementById('bbf-page-content');
-            if (container) {
-                container.innerHTML = '<div class="bbf-text-center" style="padding:60px 0"><div class="bbf-spinner bbf-spinner-lg"></div><br><small class="bbf-text-muted">Lade...</small></div>';
-            }
-
-            var self = this;
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', postURL, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.responseType = 'json';
-            xhr.onload = function() {
-                if (xhr.status === 200 && xhr.response) {
-                    if (xhr.response.content) {
-                        container.innerHTML = xhr.response.content;
-                        // Fade-in animation
-                        container.classList.remove('bbf-page-enter');
-                        void container.offsetWidth;
-                        container.classList.add('bbf-page-enter');
-                        // Init page-specific scripts
-                        self.initPageScripts(pageName);
-                        self.evalInlineScripts(container);
-                    }
-                    if (xhr.response.errors) {
-                        xhr.response.errors.forEach(function(err) {
-                            bbfToast(err, 'error');
-                        });
-                    }
-                } else {
-                    container.innerHTML = '<div class="bbf-card"><p>Laden fehlgeschlagen.</p></div>';
-                }
-                self.loading = false;
-            };
-            xhr.onerror = function() {
-                container.innerHTML = '<div class="bbf-card"><p>Verbindungsfehler.</p></div>';
-                self.loading = false;
-            };
-            xhr.send('action=getPage&page=' + encodeURIComponent(pageName) + '&is_ajax=1&jtl_token=' + encodeURIComponent(jtlToken));
-        },
-
-        initPageScripts(pageName) {
-            // Initialize page-specific features after AJAX load
-            switch (pageName) {
-                case 'branches':
-                    bbfInitBranchesPage();
-                    break;
-                case 'layouts':
-                    bbfInitLayoutsPage();
-                    break;
-                case 'styling':
-                    bbfInitStylingPage();
-                    break;
-                case 'css_editor':
-                    bbfInitCssEditor();
-                    break;
-                case 'documentation':
-                    bbfInitAccordions();
-                    break;
-            }
-
-            // Init tabs on all pages
-            bbfInitTabs();
-            // Init toggle switches
-            bbfInitToggles();
-        },
-
-        evalInlineScripts(container) {
-            var scripts = container.querySelectorAll('script');
-            scripts.forEach(function(script) {
-                var newScript = document.createElement('script');
-                if (script.src) {
-                    newScript.src = script.src;
-                } else {
-                    newScript.textContent = script.textContent;
-                }
-                document.head.appendChild(newScript);
-                document.head.removeChild(newScript);
-            });
+    // ── Sidebar Toggle (collapse/expand) ──
+    $('#bbf-sidebar-toggle').on('click', function () {
+        var sidebar = document.getElementById('bbf-sidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('bbf-sidebar-collapsed');
         }
-    };
+        try {
+            var collapsed = sidebar && sidebar.classList.contains('bbf-sidebar-collapsed');
+            localStorage.setItem('bbf_ff_sidebar_collapsed', collapsed ? '1' : '0');
+        } catch(e) {}
+    });
+
+    // Restore collapsed state
+    try {
+        if (localStorage.getItem('bbf_ff_sidebar_collapsed') === '1') {
+            var sidebar = document.getElementById('bbf-sidebar');
+            if (sidebar) sidebar.classList.add('bbf-sidebar-collapsed');
+        }
+    } catch(e) {}
+
+    // ── Bootstrap tab support ──
+    $(document).on('click', 'a.nav-link', function () {
+        if (typeof bootstrap !== 'undefined') {
+            var tab = new bootstrap.Tab(this);
+            tab.show();
+        } else {
+            $(this).tab('show');
+        }
+    });
+
+    // Start on branches page
+    getPage('branches');
+});
+
+/* ═══════════════════════════════════════════════════════════
+   Page Navigation (AJAX)
+   ═══════════════════════════════════════════════════════════ */
+
+function getPage(page, type) {
+    type = type || 'page';
+
+    if (type === 'page') {
+        $('#bbf-page-content').html(
+            '<div class="bbf-text-center" style="padding:60px 0">' +
+            '<div class="bbf-spinner bbf-spinner-lg"></div><br>' +
+            '<small class="bbf-text-muted">Lade...</small></div>'
+        );
+    }
+
+    $.ajax({
+        url: postURL,
+        data: {
+            action: 'getPage',
+            page: page,
+            is_ajax: 1,
+            jtl_token: jtlToken
+        },
+        method: 'POST',
+        dataType: 'json',
+        success: function (response) {
+            if (response && response.errors && response.errors.length) {
+                response.errors.forEach(function (error) {
+                    bbfToast(error, 'error');
+                });
+                return;
+            }
+            if (type === 'page' && response && response.content) {
+                $('#bbf-page-content').html(response.content);
+                bbfAfterPageLoad(page);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('BBF getPage error:', textStatus, errorThrown, (jqXHR.responseText || '').substring(0, 500));
+            $('#bbf-page-content').html(
+                '<div class="bbf-card"><p style="color:var(--bbf-danger)">Laden fehlgeschlagen: ' +
+                (errorThrown || textStatus) + '</p>' +
+                '<p class="bbf-text-sm bbf-text-muted">postURL: ' + bbfEscape(postURL || '(leer)') + '</p>' +
+                '<p class="bbf-text-sm bbf-text-muted">Prüfe die Browser-Konsole (F12) für Details.</p></div>'
+            );
+        }
+    });
+}
+
+function bbfAfterPageLoad(page) {
+    // Fade-in animation
+    var pageEl = document.getElementById('bbf-page-content');
+    if (pageEl) {
+        pageEl.classList.remove('bbf-page-enter');
+        void pageEl.offsetWidth;
+        pageEl.classList.add('bbf-page-enter');
+    }
+
+    // Update active sidebar link
+    $('.bbf-sidebar-nav a').removeClass('bbf-nav-active');
+    $('.bbf-sidebar-nav a[data-page="' + page + '"]').addClass('bbf-nav-active');
+
+    // Execute inline scripts from loaded template
+    $('#bbf-page-content script').each(function () {
+        if (this.src) {
+            $.getScript(this.src);
+        } else {
+            try { $.globalEval(this.textContent); } catch(e) { console.warn('BBF script eval error:', e); }
+        }
+    });
+
+    // Page-specific initialization
+    switch (page) {
+        case 'branches':   bbfInitBranchesPage(); break;
+        case 'layouts':    bbfInitLayoutsPage(); break;
+        case 'styling':    bbfInitStylingPage(); break;
+        case 'css_editor': bbfInitCssEditor(); break;
+        case 'documentation': bbfInitAccordions(); break;
+    }
+
+    // Init tabs on all pages
+    bbfInitTabs();
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -128,40 +151,41 @@ function bbfToast(message, type) {
    ═══════════════════════════════════════════════════════════ */
 
 function bbfAjax(action, data, callback) {
-    var params = 'action=' + encodeURIComponent(action) + '&is_ajax=1&jtl_token=' + encodeURIComponent(jtlToken);
-    if (typeof data === 'string') {
-        params += '&' + data;
-    } else if (data instanceof FormData) {
+    if (data instanceof FormData) {
         data.append('action', action);
         data.append('is_ajax', '1');
         data.append('jtl_token', jtlToken);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', postURL, true);
-        xhr.responseType = 'json';
-        xhr.onload = function() {
-            if (callback) callback(xhr.response);
-        };
-        xhr.send(data);
-        return;
-    } else if (typeof data === 'object') {
-        for (var key in data) {
-            if (data.hasOwnProperty(key)) {
-                params += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+
+        $.ajax({
+            url: postURL,
+            method: 'POST',
+            data: data,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (response) { if (callback) callback(response); },
+            error: function (jqXHR, textStatus, errorThrown) {
+                bbfToast('Verbindungsfehler: ' + (errorThrown || textStatus), 'error');
             }
-        }
+        });
+        return;
     }
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', postURL, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-        if (callback) callback(xhr.response);
-    };
-    xhr.onerror = function() {
-        bbfToast('Verbindungsfehler', 'error');
-    };
-    xhr.send(params);
+    var params = { action: action, is_ajax: 1, jtl_token: jtlToken };
+    if (typeof data === 'object') {
+        $.extend(params, data);
+    }
+
+    $.ajax({
+        url: postURL,
+        method: 'POST',
+        data: params,
+        dataType: 'json',
+        success: function (response) { if (callback) callback(response); },
+        error: function (jqXHR, textStatus, errorThrown) {
+            bbfToast('Verbindungsfehler: ' + (errorThrown || textStatus), 'error');
+        }
+    });
 }
 
 function bbfSaveSettings(formId, page) {
@@ -201,7 +225,6 @@ function bbfInitBranchesPage() {
         });
     }
 
-    // Per-page selector
     var perPage = document.getElementById('bbf-per-page');
     if (perPage) {
         perPage.addEventListener('change', function() {
@@ -209,10 +232,8 @@ function bbfInitBranchesPage() {
         });
     }
 
-    // Init pagination
     bbfPaginateBranches(1, 10);
 
-    // Bulk select all
     var selectAll = document.getElementById('bbf-select-all');
     if (selectAll) {
         selectAll.addEventListener('change', function() {
@@ -249,7 +270,6 @@ function bbfPaginateBranches(page, perPage) {
         row.style.display = (i >= start && i < end) ? '' : 'none';
     });
 
-    // Update pagination
     var pag = document.getElementById('bbf-pagination');
     if (pag) {
         var html = '';
@@ -271,12 +291,9 @@ function bbfUpdateBulkBar() {
     var checked = document.querySelectorAll('.bbf-branch-checkbox:checked').length;
     var bar = document.getElementById('bbf-bulk-bar');
     if (bar) {
-        if (checked > 0) {
-            bar.classList.add('visible');
-            document.getElementById('bbf-bulk-count').textContent = checked + ' ausgewählt';
-        } else {
-            bar.classList.remove('visible');
-        }
+        bar.style.display = checked > 0 ? 'flex' : 'none';
+        var countEl = document.getElementById('bbf-bulk-count');
+        if (countEl) countEl.textContent = checked + ' ausgewählt';
     }
 }
 
@@ -293,7 +310,7 @@ function bbfDeleteBranch(id) {
     bbfAjax('deleteBranch', { branch_id: id }, function(response) {
         if (response && response.success) {
             bbfToast(response.message || 'Gelöscht', 'success');
-            bbfReloadPage('branches');
+            getPage('branches');
         } else if (response && response.errors) {
             response.errors.forEach(function(e) { bbfToast(e, 'error'); });
         }
@@ -304,7 +321,7 @@ function bbfDuplicateBranch(id) {
     bbfAjax('duplicateBranch', { branch_id: id }, function(response) {
         if (response && response.success) {
             bbfToast(response.message || 'Dupliziert', 'success');
-            bbfReloadPage('branches');
+            getPage('branches');
         }
     });
 }
@@ -327,7 +344,7 @@ function bbfBulkAction(action) {
     bbfAjax('bulkAction', formData, function(response) {
         if (response && response.success) {
             bbfToast(response.message, 'success');
-            bbfReloadPage('branches');
+            getPage('branches');
         }
     });
 }
@@ -375,7 +392,6 @@ function bbfPopulateBranchForm(branch) {
     var activeToggle = document.getElementById('bbf-field-is_active');
     if (activeToggle) activeToggle.checked = parseInt(branch.is_active) === 1;
 
-    // Populate opening hours
     if (branch.hours) {
         branch.hours.forEach(function(h) {
             var day = parseInt(h.day_of_week);
@@ -389,7 +405,6 @@ function bbfPopulateBranchForm(branch) {
         });
     }
 
-    // Populate special days
     if (branch.special_days && branch.special_days.length > 0) {
         var container = document.getElementById('bbf-special-days-container');
         if (container) {
@@ -400,7 +415,6 @@ function bbfPopulateBranchForm(branch) {
         }
     }
 
-    // Image preview
     if (branch.image_path) {
         var preview = document.getElementById('bbf-image-preview');
         if (preview) {
@@ -415,7 +429,6 @@ function bbfSaveBranch() {
     if (!form) return;
 
     var formData = new FormData(form);
-    // Handle unchecked toggles
     form.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
         if (!formData.has(cb.name)) {
             formData.set(cb.name, '0');
@@ -425,7 +438,7 @@ function bbfSaveBranch() {
     bbfAjax('saveBranch', formData, function(response) {
         if (response && response.success) {
             bbfToast(response.message || 'Gespeichert', 'success');
-            bbfReloadPage('branches');
+            getPage('branches');
         } else if (response && response.errors) {
             response.errors.forEach(function(e) { bbfToast(e, 'error'); });
         }
@@ -528,7 +541,7 @@ function bbfUpdateLayoutPreview(layout) {
     if (!previewBody) return;
 
     var previews = {
-        'default': '<div style="display:flex;gap:16px"><div style="flex:1"><div style="border-left:3px solid #C8B831;padding:12px;margin-bottom:8px;background:#fafafa;border-radius:4px"><strong>God of Games Hof</strong><br><small>Lorenzstraße 14, 95028 Hof</small><br><span style="color:#16a34a;font-size:12px">● Jetzt geöffnet</span></div><div style="border-left:3px solid #C8B831;padding:12px;background:#fafafa;border-radius:4px"><strong>God of Games Plauen</strong><br><small>Postplatz 5, 08523 Plauen</small><br><span style="color:#dc2626;font-size:12px">● Geschlossen</span></div></div><div style="flex:1;background:#e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:200px;color:#6b7280">Kartenvorschau</div></div>',
+        'default': '<div style="display:flex;gap:16px"><div style="flex:1"><div style="border-left:3px solid var(--bbf-primary);padding:12px;margin-bottom:8px;background:#fafafa;border-radius:4px"><strong>God of Games Hof</strong><br><small>Lorenzstraße 14, 95028 Hof</small><br><span style="color:#16a34a;font-size:12px">● Jetzt geöffnet</span></div><div style="border-left:3px solid var(--bbf-primary);padding:12px;background:#fafafa;border-radius:4px"><strong>God of Games Plauen</strong><br><small>Postplatz 5, 08523 Plauen</small><br><span style="color:#dc2626;font-size:12px">● Geschlossen</span></div></div><div style="flex:1;background:#e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:200px;color:#6b7280">Kartenvorschau</div></div>',
         'map_only': '<div style="background:#e5e7eb;border-radius:8px;min-height:300px;display:flex;align-items:center;justify-content:center;color:#6b7280">Vollbreite Kartenansicht mit Markern</div>',
         'grid': '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center"><div style="background:#f0f2f5;height:60px;border-radius:4px;margin-bottom:8px"></div><strong>God of Games Hof</strong><br><small style="color:#6b7280">95028 Hof</small><br><span style="color:#16a34a;font-size:12px">● Geöffnet</span></div><div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center"><div style="background:#f0f2f5;height:60px;border-radius:4px;margin-bottom:8px"></div><strong>God of Games Plauen</strong><br><small style="color:#6b7280">08523 Plauen</small><br><span style="color:#dc2626;font-size:12px">● Geschlossen</span></div></div>',
         'accordion': '<div><div style="border:1px solid #e5e7eb;border-radius:8px;margin-bottom:8px"><div style="padding:12px 16px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between">God of Games Hof <span style="color:#16a34a">● Geöffnet</span></div><div style="padding:12px 16px;border-top:1px solid #e5e7eb;font-size:13px">Lorenzstraße 14, 95028 Hof<br>Tel: 09281 1446128</div></div><div style="border:1px solid #e5e7eb;border-radius:8px"><div style="padding:12px 16px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between">God of Games Plauen <span style="color:#dc2626">● Geschlossen</span></div></div></div>',
@@ -556,23 +569,17 @@ function bbfSaveLayout() {
    ═══════════════════════════════════════════════════════════ */
 
 function bbfInitStylingPage() {
-    // Sync color pickers with text inputs
     document.querySelectorAll('.bbf-colorpicker').forEach(function(cp) {
         var colorInput = cp.querySelector('input[type="color"]');
         var textInput = cp.querySelector('input[type="text"]');
         if (colorInput && textInput) {
-            colorInput.addEventListener('input', function() {
-                textInput.value = this.value;
-            });
+            colorInput.addEventListener('input', function() { textInput.value = this.value; });
             textInput.addEventListener('input', function() {
-                if (/^#[0-9a-fA-F]{6}$/.test(this.value)) {
-                    colorInput.value = this.value;
-                }
+                if (/^#[0-9a-fA-F]{6}$/.test(this.value)) colorInput.value = this.value;
             });
         }
     });
 
-    // Range sliders with value display
     document.querySelectorAll('.bbf-range-group').forEach(function(rg) {
         var range = rg.querySelector('input[type="range"]');
         var value = rg.querySelector('.bbf-range-value');
@@ -589,17 +596,11 @@ function bbfInitStylingPage() {
    ═══════════════════════════════════════════════════════════ */
 
 function bbfInitCssEditor() {
-    // If CodeMirror is available, initialize it
     var textarea = document.getElementById('bbf-css-textarea');
     if (textarea && typeof CodeMirror !== 'undefined') {
         window.bbfCssEditor = CodeMirror.fromTextArea(textarea, {
-            mode: 'css',
-            theme: 'default',
-            lineNumbers: true,
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            indentUnit: 2,
-            tabSize: 2,
+            mode: 'css', theme: 'default', lineNumbers: true,
+            matchBrackets: true, autoCloseBrackets: true, indentUnit: 2, tabSize: 2,
         });
         window.bbfCssEditor.setSize('100%', '400px');
     }
@@ -614,20 +615,14 @@ function bbfSaveCss() {
         if (textarea) css = textarea.value;
     }
     bbfAjax('saveSettings', { setting_custom_css: css, settings_page: 'css_editor' }, function(response) {
-        if (response && response.success) {
-            bbfToast('CSS gespeichert', 'success');
-        }
+        if (response && response.success) bbfToast('CSS gespeichert', 'success');
     });
 }
 
 function bbfResetCss() {
     if (!confirm('Benutzerdefiniertes CSS wirklich zurücksetzen?')) return;
-    if (window.bbfCssEditor) {
-        window.bbfCssEditor.setValue('');
-    } else {
-        var textarea = document.getElementById('bbf-css-textarea');
-        if (textarea) textarea.value = '';
-    }
+    if (window.bbfCssEditor) window.bbfCssEditor.setValue('');
+    else { var t = document.getElementById('bbf-css-textarea'); if (t) t.value = ''; }
     bbfSaveCss();
 }
 
@@ -661,13 +656,11 @@ function bbfInitTabs() {
             var target = this.dataset.tab;
             if (!target) return;
 
-            // Deactivate all tabs in this group
             this.closest('.bbf-tabs').querySelectorAll('.bbf-tab-link').forEach(function(t) {
                 t.classList.remove('active');
             });
             this.classList.add('active');
 
-            // Show/hide tab contents
             var parent = this.closest('.bbf-card') || document.getElementById('bbf-page-content');
             if (parent) {
                 parent.querySelectorAll('.bbf-tab-content').forEach(function(tc) {
@@ -680,25 +673,16 @@ function bbfInitTabs() {
     });
 }
 
-function bbfInitToggles() {
-    // Toggles work natively with CSS — no JS needed
-}
-
 function bbfInitAccordions() {
     document.querySelectorAll('.bbf-accordion-header').forEach(function(header) {
         header.addEventListener('click', function() {
             var body = this.nextElementSibling;
             var isActive = this.classList.contains('active');
 
-            // Close all in same accordion
             var accordion = this.closest('.bbf-accordion');
             if (accordion) {
-                accordion.querySelectorAll('.bbf-accordion-header').forEach(function(h) {
-                    h.classList.remove('active');
-                });
-                accordion.querySelectorAll('.bbf-accordion-body').forEach(function(b) {
-                    b.classList.remove('active');
-                });
+                accordion.querySelectorAll('.bbf-accordion-header').forEach(function(h) { h.classList.remove('active'); });
+                accordion.querySelectorAll('.bbf-accordion-body').forEach(function(b) { b.classList.remove('active'); });
             }
 
             if (!isActive) {
@@ -707,23 +691,6 @@ function bbfInitAccordions() {
             }
         });
     });
-}
-
-function bbfReloadPage(page) {
-    var el = document.querySelector('[x-data]');
-    if (el && el.__x) {
-        el.__x.$data.loadPage(page || el.__x.$data.page);
-    } else {
-        // Fallback: re-trigger Alpine
-        try {
-            var alpineEl = document.querySelector('.bbf-plugin-page');
-            if (alpineEl && alpineEl._x_dataStack) {
-                alpineEl._x_dataStack[0].loadPage(page || 'branches');
-            }
-        } catch(e) {
-            location.reload();
-        }
-    }
 }
 
 function bbfEscape(str) {

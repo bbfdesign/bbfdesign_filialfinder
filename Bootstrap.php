@@ -168,11 +168,15 @@ class Bootstrap extends Bootstrapper
         $plugin = $this->getPlugin();
         $db = Shop::Container()->getDB();
 
-        // === AJAX HANDLER ===
+        // === AJAX HANDLER — must come FIRST, before any Smarty/HTML ===
         if (isset($_REQUEST['is_ajax']) && (int)$_REQUEST['is_ajax'] === 1) {
+            // Suppress ALL PHP output
             @ini_set('display_errors', '0');
             @error_reporting(E_ERROR | E_PARSE);
+            @set_time_limit(120); // Prevent default 30s timeout from killing AJAX
 
+            // Release PHP session lock immediately — JTL's /admin/io holds
+            // the session for seconds, blocking concurrent AJAX requests.
             if (session_status() === PHP_SESSION_ACTIVE) {
                 session_write_close();
             }

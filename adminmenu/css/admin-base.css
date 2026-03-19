@@ -1,6 +1,7 @@
 /**
  * BBF Design System – CSS Custom Properties
  * BBF Filialfinder Admin
+ * Konsistent mit bbfdesign_search / bbfdesign_customercenter Admin-Design
  */
 
 /* ─── Font Face ─── */
@@ -51,41 +52,63 @@
 /* ─── Light Mode (Default) ─── */
 
 :root {
-    --bbf-primary: #C8B831;
-    --bbf-primary-dark: #a89a28;
-    --bbf-primary-light: rgba(200, 184, 49, 0.08);
-    --bbf-primary-shadow: rgba(200, 184, 49, 0.3);
-    --bbf-bg: #f4f6f9;
+    /* Farben – Primary (bbfdesign standard magenta) */
+    --bbf-primary: #db2e87;
+    --bbf-primary-dark: #c41f76;
+    --bbf-primary-light: #f9e8f1;
+    --bbf-primary-shadow: rgba(219, 46, 135, 0.3);
+    --bbf-primary-badge: #c8dd9b;
+
+    /* Farben – Neutral */
+    --bbf-text: #29343d;
+    --bbf-text-dark: #29343d;
+    --bbf-text-medium: #454545;
+    --bbf-muted: #737385;
+
+    /* Farben – Background */
+    --bbf-bg: #f4f7fb;
     --bbf-card-bg: #ffffff;
-    --bbf-border: #e5e7eb;
-    --bbf-border-light: #f0f0f0;
-    --bbf-text: #1f2937;
-    --bbf-muted: #6b7280;
-    --bbf-success: #16a34a;
-    --bbf-success-light: #dcfce7;
-    --bbf-danger: #dc2626;
-    --bbf-danger-light: #fee2e2;
-    --bbf-warning: #f59e0b;
-    --bbf-warning-light: #fef3c7;
-    --bbf-info: #0ea5e9;
-    --bbf-info-light: #e0f2fe;
+    --bbf-body-bg: #f4f7fb;
+    --bbf-sidebar-bg: #ffffff;
+    --bbf-input-bg: #f5f5f5;
+
+    /* Farben – Border */
+    --bbf-border: #e6e6e8;
+    --bbf-border-light: #f7f7f7;
+    --bbf-input-border: #f5f5f5;
+    --bbf-input-focus: rgba(219, 46, 135, 0.15);
+
+    /* Farben – Status */
+    --bbf-success: #28a745;
+    --bbf-success-light: #d4edda;
+    --bbf-danger: #dc3545;
+    --bbf-danger-light: #f8d7da;
+    --bbf-warning: #ffc107;
+    --bbf-warning-light: #fff3cd;
+    --bbf-info: #17a2b8;
+    --bbf-info-light: #d1ecf1;
+
+    /* Typografie */
+    --bbf-font: 'Manrope', Helvetica, Arial, Lucida, sans-serif;
+
+    /* Abstände & Radien */
     --bbf-radius: 10px;
-    --bbf-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-    --bbf-sidebar-width: 260px;
-    --bbf-sidebar-bg: #fafafa;
     --bbf-card-radius: 8px;
     --bbf-card-padding: 24px;
     --bbf-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --bbf-body-bg: #f0f2f5;
-    --bbf-font: 'Manrope', Helvetica, Arial, sans-serif;
-    --bbf-th-bg: #f8f9fa;
+    --bbf-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+
+    /* Sidebar */
+    --bbf-sidebar-width: 260px;
+
+    /* Tabelle */
+    --bbf-th-bg: #f6f9fc;
     --bbf-th-text: #6b7280;
     --bbf-body-text: #1f2937;
     --bbf-row-stripe: #fafbfc;
-    --bbf-row-hover: rgba(200, 184, 49, 0.04);
-    --bbf-input-bg: #f5f5f5;
-    --bbf-input-border: #e5e7eb;
-    --bbf-input-focus: rgba(200, 184, 49, 0.2);
+    --bbf-row-hover: rgba(219, 46, 135, 0.04);
+
+    /* Transitions */
     --bbf-transition: 0.2s ease;
     --bbf-transition-slow: 0.3s ease;
 }
@@ -95,6 +118,7 @@
 .theme-dark {
     --bbf-sidebar-bg: #1a1a2e;
     --bbf-text: #e0e0e0;
+    --bbf-text-dark: #e0e0e0;
     --bbf-muted: #888;
     --bbf-card-bg: #252540;
     --bbf-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -105,7 +129,7 @@
     --bbf-th-bg: #1e1e36;
     --bbf-th-text: #aaa;
     --bbf-row-stripe: #1e1e36;
-    --bbf-row-hover: rgba(200, 184, 49, 0.08);
+    --bbf-row-hover: rgba(219, 46, 135, 0.08);
     --bbf-input-bg: #1e1e36;
     --bbf-input-border: #333355;
     --bbf-bg: #141425;

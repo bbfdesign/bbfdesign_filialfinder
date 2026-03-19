@@ -37,6 +37,23 @@ body #content_wrapper {
     margin-bottom: 0 !important;
 }
 
+#content .form-control:focus {
+    border-color: var(--bbf-primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(219, 46, 135, 0.1);
+}
+
+#content .btn-primary {
+    background: var(--bbf-primary) !important;
+    border-color: var(--bbf-primary) !important;
+}
+
+#content .btn-primary:hover,
+#content .btn-primary:focus {
+    background: var(--bbf-primary-dark) !important;
+    border-color: var(--bbf-primary-dark) !important;
+}
+
 /* ═══════════════════════════════════════════════════════════
    Plugin Page Layout
    ═══════════════════════════════════════════════════════════ */
@@ -132,14 +149,20 @@ body #content_wrapper {
 }
 
 .bbf-sidebar-nav li a:hover {
-    background: var(--bbf-primary-light);
-    color: var(--bbf-text);
+    background: var(--bbf-primary);
+    color: #fff;
+    box-shadow: 0 17px 20px -8px rgba(219, 46, 135, 0.23);
+}
+
+.bbf-sidebar-nav li a:hover svg {
+    stroke: #fff;
 }
 
 .bbf-sidebar-nav li a.bbf-nav-active {
     background: var(--bbf-primary);
     color: #fff;
-    box-shadow: 0 2px 8px var(--bbf-primary-shadow);
+    font-weight: 500;
+    box-shadow: 0 17px 20px -8px rgba(219, 46, 135, 0.23);
 }
 
 .bbf-sidebar-nav li a.bbf-nav-active svg {
@@ -371,7 +394,7 @@ body #content_wrapper {
 
 .bbf-btn-primary:hover {
     background: var(--bbf-primary-dark);
-    box-shadow: 0 4px 12px var(--bbf-primary-shadow);
+    box-shadow: 0 8px 20px -6px rgba(219, 46, 135, 0.4);
 }
 
 .bbf-btn-secondary {
