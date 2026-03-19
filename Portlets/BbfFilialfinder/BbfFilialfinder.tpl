@@ -618,13 +618,27 @@
             setTimeout(function() { map.invalidateSize(); }, 300);
         }
 
-        {* Auto-init on DOM ready *}
-        if (hasConsent()) {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initMap);
-            } else {
-                initMap();
+        {* Auto-init: wait for Leaflet to be loaded, then init map *}
+        function tryInitMap() {
+            if (!hasConsent()) return;
+            if (provider === 'osm' && typeof L === 'undefined') {
+                {* Leaflet not loaded yet — retry in 200ms, up to 25 times (5s) *}
+                if (typeof tryInitMap._retries === 'undefined') tryInitMap._retries = 0;
+                if (tryInitMap._retries < 25) {
+                    tryInitMap._retries++;
+                    setTimeout(tryInitMap, 200);
+                } else {
+                    if (mapEl) mapEl.innerHTML = '<p style="text-align:center;padding:40px;color:#999;">Leaflet.js konnte nicht geladen werden.</p>';
+                }
+                return;
             }
+            initMap();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', tryInitMap);
+        } else {
+            tryInitMap();
         }
     })();
     </script>
