@@ -493,6 +493,11 @@ function bbfLoadBranchData(id) {
           document.getElementById('bbf-field-marker_color_hex').value = b.marker_color;
         }
 
+        // Mini map preview
+        if (b.latitude && b.longitude) {
+          bbfUpdateMiniMap(b.latitude, b.longitude);
+        }
+
         // Summernote HTML description
         var htmlEditor = document.getElementById('bbf-field-description_html');
         if (htmlEditor && typeof $ !== 'undefined' && typeof $.fn.summernote !== 'undefined') {
@@ -555,6 +560,7 @@ function bbfGeocode() {
     if (r && r.success && r.lat && r.lng) {
       document.getElementById('bbf-field-latitude').value = r.lat;
       document.getElementById('bbf-field-longitude').value = r.lng;
+      bbfUpdateMiniMap(r.lat, r.lng);
       bbfToast('Koordinaten ermittelt: ' + parseFloat(r.lat).toFixed(6) + ', ' + parseFloat(r.lng).toFixed(6), 'success');
     } else if (r && r.errors && r.errors.length) {
       r.errors.forEach(function(e) { bbfToast(e, 'error'); });
@@ -566,7 +572,12 @@ function bbfGeocode() {
 
 function bbfUpdateMiniMap(lat, lng) {
   var container = document.getElementById('bbf-mini-map');
-  container.innerHTML = '<img src="https://maps.googleapis.com/maps/api/staticmap?center=' + lat + ',' + lng + '&zoom=15&size=600x250&markers=color:red%7C' + lat + ',' + lng + '&key=" alt="Kartenvorschau" style="width:100%;height:100%;object-fit:cover;border-radius:var(--bbf-radius);">';
+  if (!lat || !lng) return;
+  lat = parseFloat(lat); lng = parseFloat(lng);
+  if (isNaN(lat) || isNaN(lng)) return;
+
+  // Use OpenStreetMap static image (no API key needed)
+  container.innerHTML = '<img src="https://staticmap.openstreetmap.de/staticmap.php?center=' + lat + ',' + lng + '&zoom=15&size=600x250&markers=' + lat + ',' + lng + ',ol-marker" alt="Kartenvorschau" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=\'<div style=padding:20px;text-align:center;color:#999;>Lat: ' + lat.toFixed(6) + ', Lng: ' + lng.toFixed(6) + ' ✓</div>\'">';
 }
 
 function bbfCopyMondayToAll() {
