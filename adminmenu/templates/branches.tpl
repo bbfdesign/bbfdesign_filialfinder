@@ -576,8 +576,11 @@ function bbfUpdateMiniMap(lat, lng) {
   lat = parseFloat(lat); lng = parseFloat(lng);
   if (isNaN(lat) || isNaN(lng)) return;
 
-  // Use OpenStreetMap static image (no API key needed)
-  container.innerHTML = '<img src="https://staticmap.openstreetmap.de/staticmap.php?center=' + lat + ',' + lng + '&zoom=15&size=600x250&markers=' + lat + ',' + lng + ',ol-marker" alt="Kartenvorschau" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" onerror="this.parentElement.innerHTML=\'<div style=padding:20px;text-align:center;color:#999;>Lat: ' + lat.toFixed(6) + ', Lng: ' + lng.toFixed(6) + ' ✓</div>\'">';
+  // Use OpenStreetMap embed iframe (works without API key, always loads)
+  container.innerHTML = '<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=' +
+    (lng - 0.005) + ',' + (lat - 0.003) + ',' + (lng + 0.005) + ',' + (lat + 0.003) +
+    '&layer=mapnik&marker=' + lat + ',' + lng +
+    '" style="width:100%;height:100%;border:none;border-radius:8px;" loading="lazy"></iframe>';
 }
 
 function bbfCopyMondayToAll() {

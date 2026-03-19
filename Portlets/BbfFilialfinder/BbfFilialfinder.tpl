@@ -18,49 +18,33 @@
     {assign var=ffBaseUrl value=$ffData.pluginBaseUrl|default:''}
     {assign var=ffInstanceId value=$instance->getId()|default:($smarty.now|md5|truncate:8:'')}
 
-    {* ===== Frontend CSS ===== *}
-    <!-- bbf-debug: ffPluginUrl={$ffPluginUrl|escape:'html'} ffBaseUrl={$ffBaseUrl|escape:'html'} -->
-    {if $ffPluginUrl}
-        <link rel="stylesheet" href="{$ffPluginUrl}css/filialfinder.css">
-    {else}
-        {* Hardcoded fallback if plugin URL resolution failed *}
-        <link rel="stylesheet" href="/plugins/bbfdesign_filialfinder/frontend/css/filialfinder.css">
-    {/if}
-    {if $ffProvider === 'osm'}
-        {if $ffBaseUrl}
-            <link rel="stylesheet" href="{$ffBaseUrl}vendor/leaflet/leaflet.css">
-        {else}
-            <link rel="stylesheet" href="/plugins/bbfdesign_filialfinder/vendor/leaflet/leaflet.css">
-        {/if}
-    {/if}
-
-    {* ===== Dynamic CSS variables from plugin settings ===== *}
-    <style>
-        .bbf-filialfinder-wrapper--{$ffInstanceId} {
-            --bbf-ff-primary: {$ffData.settings.styling_primary_color|default:'#C8B831'};
-            --bbf-ff-secondary: {$ffData.settings.styling_secondary_color|default:'#1f2937'};
-            --bbf-ff-bg: {$ffData.settings.styling_bg_color|default:'#ffffff'};
-            --bbf-ff-text: {$ffData.settings.styling_text_color|default:'#1f2937'};
-            --bbf-ff-open: {$ffData.settings.styling_open_color|default:'#28a745'};
-            --bbf-ff-closed: {$ffData.settings.styling_closed_color|default:'#dc3545'};
-            --bbf-ff-marker: {$ffData.settings.styling_marker_color|default:'#C8B831'};
-            --bbf-ff-radius: {$ffData.settings.styling_border_radius|default:'8'}px;
-            --bbf-ff-shadow: 0 {$ffData.settings.styling_shadow_intensity|default:'2'}px {$ffData.settings.styling_shadow_intensity|default:'2' * 4}px rgba(0,0,0,0.1);
-            --bbf-ff-border: {$ffData.settings.styling_border_color|default:'#e5e7eb'};
-        }
-        {* Custom CSS from CSS-Editor *}
-        {if !empty($ffData.settings.custom_css)}
-            {$ffData.settings.custom_css}
-        {/if}
-    </style>
-
-    {* ===== Main wrapper ===== *}
+    {* ===== Main wrapper (CSS MUST be inside for OPC compatibility) ===== *}
     <div class="bbf-filialfinder-wrapper bbf-filialfinder-wrapper--{$ffInstanceId} {$instance->getStyleClasses()}"
          data-filialfinder
          data-provider="{$ffProvider|escape:'htmlall'}"
          data-settings='{$ffData.settings|json_encode}'
          id="bbf-filialfinder-{$ffInstanceId}"
          style="{$instance->getStyleString()}">
+
+        {* ===== CSS inside wrapper (JTL OPC strips <link>/<style> outside portlet div) ===== *}
+        <style scoped>
+            @import url('{if $ffPluginUrl}{$ffPluginUrl}css/filialfinder.css{else}/plugins/bbfdesign_filialfinder/frontend/css/filialfinder.css{/if}');
+            {if $ffProvider === 'osm'}
+            @import url('{if $ffBaseUrl}{$ffBaseUrl}vendor/leaflet/leaflet.css{else}/plugins/bbfdesign_filialfinder/vendor/leaflet/leaflet.css{/if}');
+            {/if}
+            .bbf-filialfinder-wrapper--{$ffInstanceId} {
+                --bbf-ff-primary: {$ffData.settings.styling_primary_color|default:'#C8B831'};
+                --bbf-ff-secondary: {$ffData.settings.styling_secondary_color|default:'#1f2937'};
+                --bbf-ff-bg: {$ffData.settings.styling_bg_color|default:'#ffffff'};
+                --bbf-ff-text: {$ffData.settings.styling_text_color|default:'#1f2937'};
+                --bbf-ff-open: {$ffData.settings.styling_open_color|default:'#28a745'};
+                --bbf-ff-closed: {$ffData.settings.styling_closed_color|default:'#dc3545'};
+                --bbf-ff-marker: {$ffData.settings.styling_marker_color|default:'#C8B831'};
+                --bbf-ff-radius: {$ffData.settings.styling_border_radius|default:'8'}px;
+                --bbf-ff-border: {$ffData.settings.styling_border_color|default:'#e5e7eb'};
+            }
+            {if !empty($ffData.settings.custom_css)}{$ffData.settings.custom_css}{/if}
+        </style>
 
         {* ===== Title block ===== *}
         {if $ffShowTitle && $ffTitle}
