@@ -42,17 +42,25 @@ class Bootstrap extends Bootstrapper
             $settings = new Setting($db);
 
             if (Shop::isFrontend()) {
-                // Register Smarty plugin function {bbf_filialfinder ...}
-                $dispatcher->listen('shop.hook.' . \HOOK_SMARTY_OUTPUTFILTER, static function (array $args) use ($plugin, $db, $settings) {
-                    try {
-                        $smarty = $args['smarty'] ?? null;
-                        if ($smarty instanceof JTLSmarty) {
-                            FilialfinderSmartyPlugin::register($smarty, $plugin, $db, $settings);
-                        }
-                    } catch (\Throwable $e) {
-                        // Silent fail
+                // Register Smarty plugin function {bbf_filialfinder ...} immediately
+                try {
+                    $smarty = Shop::Smarty();
+                    if ($smarty instanceof JTLSmarty) {
+                        FilialfinderSmartyPlugin::register($smarty, $plugin, $db, $settings);
                     }
-                });
+                } catch (\Throwable $e) {
+                    // Smarty not available yet — try again via hook
+                    $dispatcher->listen('shop.hook.' . \HOOK_SMARTY_OUTPUTFILTER, static function (array $args) use ($plugin, $db, $settings) {
+                        try {
+                            $smarty = $args['smarty'] ?? null;
+                            if ($smarty instanceof JTLSmarty) {
+                                FilialfinderSmartyPlugin::register($smarty, $plugin, $db, $settings);
+                            }
+                        } catch (\Throwable $e) {
+                            // Silent fail
+                        }
+                    });
+                }
 
                 // Include frontend CSS/JS assets
                 $dispatcher->listen('shop.hook.' . \HOOK_LETZTERINCLUDE_CSS_JS, static function (array $args) use ($plugin, $db, $settings) {

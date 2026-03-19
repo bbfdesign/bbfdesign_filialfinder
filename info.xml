@@ -11,6 +11,14 @@
     <Version>1.0.0</Version>
     <CreateDate>2026-03-19</CreateDate>
     <Install>
+        <Portlets>
+            <Portlet>
+                <Title>BBF Filialfinder</Title>
+                <Class>BbfFilialfinder</Class>
+                <Group>content</Group>
+                <Active>1</Active>
+            </Portlet>
+        </Portlets>
         <Adminmenu>
             <Customlink sort="1">
                 <Name>Filialfinder</Name>
