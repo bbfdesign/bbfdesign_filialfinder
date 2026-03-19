@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jtlshopplugin>
+    <Name>BBF Filialfinder</Name>
+    <Description>Das JTL-Shop Plugin "BBF Filialfinder" ermöglicht die Verwaltung und Darstellung von Filialstandorten mit interaktiver Kartenintegration, Öffnungszeiten-Management, Umkreissuche und DSGVO-konformem Consent-Management.</Description>
+    <Author>bbfdesign.de</Author>
+    <URL>https://www.bbfdesign.de</URL>
+    <PluginID>bbfdesign_filialfinder</PluginID>
+    <XMLVersion>100</XMLVersion>
+    <MinShopVersion>5.5.0</MinShopVersion>
+    <Icon>fa-map-marker-alt</Icon>
+    <Version>1.0.0</Version>
+    <CreateDate>2026-03-19</CreateDate>
+    <Install>
+        <Adminmenu>
+            <Customlink sort="1">
+                <Name>Filialfinder</Name>
+                <Filename>index.tpl</Filename>
+            </Customlink>
+        </Adminmenu>
+        <Locales>
+            <Variable>
+                <Name>plugin_name</Name>
+                <VariableLocalized iso="GER">BBF Filialfinder</VariableLocalized>
+                <VariableLocalized iso="ENG">BBF Store Locator</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>active</Name>
+                <VariableLocalized iso="GER">Aktiv</VariableLocalized>
+                <VariableLocalized iso="ENG">Active</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>inactive</Name>
+                <VariableLocalized iso="GER">Inaktiv</VariableLocalized>
+                <VariableLocalized iso="ENG">Inactive</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>save</Name>
+                <VariableLocalized iso="GER">Speichern</VariableLocalized>
+                <VariableLocalized iso="ENG">Save</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>cancel</Name>
+                <VariableLocalized iso="GER">Abbrechen</VariableLocalized>
+                <VariableLocalized iso="ENG">Cancel</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>delete</Name>
+                <VariableLocalized iso="GER">Löschen</VariableLocalized>
+                <VariableLocalized iso="ENG">Delete</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>edit</Name>
+                <VariableLocalized iso="GER">Bearbeiten</VariableLocalized>
+                <VariableLocalized iso="ENG">Edit</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>duplicate</Name>
+                <VariableLocalized iso="GER">Duplizieren</VariableLocalized>
+                <VariableLocalized iso="ENG">Duplicate</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>saved_successfully</Name>
+                <VariableLocalized iso="GER">Erfolgreich gespeichert</VariableLocalized>
+                <VariableLocalized iso="ENG">Saved successfully</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>deleted_successfully</Name>
+                <VariableLocalized iso="GER">Erfolgreich gelöscht</VariableLocalized>
+                <VariableLocalized iso="ENG">Deleted successfully</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>error_occurred</Name>
+                <VariableLocalized iso="GER">Ein Fehler ist aufgetreten</VariableLocalized>
+                <VariableLocalized iso="ENG">An error occurred</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>confirm_delete</Name>
+                <VariableLocalized iso="GER">Möchten Sie diesen Eintrag wirklich löschen?</VariableLocalized>
+                <VariableLocalized iso="ENG">Do you really want to delete this entry?</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>branches</Name>
+                <VariableLocalized iso="GER">Standorte</VariableLocalized>
+                <VariableLocalized iso="ENG">Branches</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>new_branch</Name>
+                <VariableLocalized iso="GER">Neue Filiale anlegen</VariableLocalized>
+                <VariableLocalized iso="ENG">Add new branch</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>edit_branch</Name>
+                <VariableLocalized iso="GER">Filiale bearbeiten</VariableLocalized>
+                <VariableLocalized iso="ENG">Edit branch</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>general</Name>
+                <VariableLocalized iso="GER">Allgemein</VariableLocalized>
+                <VariableLocalized iso="ENG">General</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>contact_address</Name>
+                <VariableLocalized iso="GER">Kontakt &amp; Adresse</VariableLocalized>
+                <VariableLocalized iso="ENG">Contact &amp; Address</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>opening_hours</Name>
+                <VariableLocalized iso="GER">Öffnungszeiten</VariableLocalized>
+                <VariableLocalized iso="ENG">Opening Hours</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>extended</Name>
+                <VariableLocalized iso="GER">Erweitert</VariableLocalized>
+                <VariableLocalized iso="ENG">Extended</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>name</Name>
+                <VariableLocalized iso="GER">Name</VariableLocalized>
+                <VariableLocalized iso="ENG">Name</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>description</Name>
+                <VariableLocalized iso="GER">Beschreibung</VariableLocalized>
+                <VariableLocalized iso="ENG">Description</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>image</Name>
+                <VariableLocalized iso="GER">Bild / Logo</VariableLocalized>
+                <VariableLocalized iso="ENG">Image / Logo</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>sort_order</Name>
+                <VariableLocalized iso="GER">Sortierung</VariableLocalized>
+                <VariableLocalized iso="ENG">Sort Order</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>street</Name>
+                <VariableLocalized iso="GER">Straße + Hausnummer</VariableLocalized>
+                <VariableLocalized iso="ENG">Street + Number</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>zip</Name>
+                <VariableLocalized iso="GER">PLZ</VariableLocalized>
+                <VariableLocalized iso="ENG">ZIP</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>city</Name>
+                <VariableLocalized iso="GER">Stadt</VariableLocalized>
+                <VariableLocalized iso="ENG">City</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>country</Name>
+                <VariableLocalized iso="GER">Land</VariableLocalized>
+                <VariableLocalized iso="ENG">Country</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>phone</Name>
+                <VariableLocalized iso="GER">Telefon</VariableLocalized>
+                <VariableLocalized iso="ENG">Phone</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>email</Name>
+                <VariableLocalized iso="GER">E-Mail</VariableLocalized>
+                <VariableLocalized iso="ENG">Email</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>website</Name>
+                <VariableLocalized iso="GER">Website</VariableLocalized>
+                <VariableLocalized iso="ENG">Website</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>latitude</Name>
+                <VariableLocalized iso="GER">Breitengrad</VariableLocalized>
+                <VariableLocalized iso="ENG">Latitude</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>longitude</Name>
+                <VariableLocalized iso="GER">Längengrad</VariableLocalized>
+                <VariableLocalized iso="ENG">Longitude</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>geocode_address</Name>
+                <VariableLocalized iso="GER">Koordinaten aus Adresse ermitteln</VariableLocalized>
+                <VariableLocalized iso="ENG">Get coordinates from address</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>now_open</Name>
+                <VariableLocalized iso="GER">Jetzt geöffnet</VariableLocalized>
+                <VariableLocalized iso="ENG">Open now</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>now_closed</Name>
+                <VariableLocalized iso="GER">Jetzt geschlossen</VariableLocalized>
+                <VariableLocalized iso="ENG">Closed now</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>opening_soon</Name>
+                <VariableLocalized iso="GER">Öffnet bald</VariableLocalized>
+                <VariableLocalized iso="ENG">Opening soon</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>closing_soon</Name>
+                <VariableLocalized iso="GER">Schließt bald</VariableLocalized>
+                <VariableLocalized iso="ENG">Closing soon</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>monday</Name>
+                <VariableLocalized iso="GER">Montag</VariableLocalized>
+                <VariableLocalized iso="ENG">Monday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>tuesday</Name>
+                <VariableLocalized iso="GER">Dienstag</VariableLocalized>
+                <VariableLocalized iso="ENG">Tuesday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>wednesday</Name>
+                <VariableLocalized iso="GER">Mittwoch</VariableLocalized>
+                <VariableLocalized iso="ENG">Wednesday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>thursday</Name>
+                <VariableLocalized iso="GER">Donnerstag</VariableLocalized>
+                <VariableLocalized iso="ENG">Thursday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>friday</Name>
+                <VariableLocalized iso="GER">Freitag</VariableLocalized>
+                <VariableLocalized iso="ENG">Friday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>saturday</Name>
+                <VariableLocalized iso="GER">Samstag</VariableLocalized>
+                <VariableLocalized iso="ENG">Saturday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>sunday</Name>
+                <VariableLocalized iso="GER">Sonntag</VariableLocalized>
+                <VariableLocalized iso="ENG">Sunday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>closed</Name>
+                <VariableLocalized iso="GER">Geschlossen</VariableLocalized>
+                <VariableLocalized iso="ENG">Closed</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>opened</Name>
+                <VariableLocalized iso="GER">Geöffnet</VariableLocalized>
+                <VariableLocalized iso="ENG">Open</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>map_consent_text</Name>
+                <VariableLocalized iso="GER">Um die Karte anzuzeigen, akzeptieren Sie bitte den Kartenanbieter in den Datenschutz-Einstellungen.</VariableLocalized>
+                <VariableLocalized iso="ENG">To display the map, please accept the map provider in the privacy settings.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>activate_maps</Name>
+                <VariableLocalized iso="GER">Karte aktivieren</VariableLocalized>
+                <VariableLocalized iso="ENG">Activate map</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>get_directions</Name>
+                <VariableLocalized iso="GER">Route berechnen</VariableLocalized>
+                <VariableLocalized iso="ENG">Get directions</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>km_away</Name>
+                <VariableLocalized iso="GER">km entfernt</VariableLocalized>
+                <VariableLocalized iso="ENG">km away</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>search_placeholder</Name>
+                <VariableLocalized iso="GER">PLZ oder Ort eingeben...</VariableLocalized>
+                <VariableLocalized iso="ENG">Enter ZIP or city...</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>no_results</Name>
+                <VariableLocalized iso="GER">Keine Filialen gefunden.</VariableLocalized>
+                <VariableLocalized iso="ENG">No branches found.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>opens_at</Name>
+                <VariableLocalized iso="GER">Öffnet %s um %s Uhr</VariableLocalized>
+                <VariableLocalized iso="ENG">Opens %s at %s</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>closes_at</Name>
+                <VariableLocalized iso="GER">Schließt um %s Uhr</VariableLocalized>
+                <VariableLocalized iso="ENG">Closes at %s</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>holiday</Name>
+                <VariableLocalized iso="GER">Feiertag</VariableLocalized>
+                <VariableLocalized iso="ENG">Holiday</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>special_day</Name>
+                <VariableLocalized iso="GER">Sondertag</VariableLocalized>
+                <VariableLocalized iso="ENG">Special day</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>all_branches</Name>
+                <VariableLocalized iso="GER">Alle Filialen</VariableLocalized>
+                <VariableLocalized iso="ENG">All branches</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>nearest_branch</Name>
+                <VariableLocalized iso="GER">Nächste Filiale</VariableLocalized>
+                <VariableLocalized iso="ENG">Nearest branch</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>more_info</Name>
+                <VariableLocalized iso="GER">Mehr Info</VariableLocalized>
+                <VariableLocalized iso="ENG">More info</VariableLocalized>
+            </Variable>
+        </Locales>
+    </Install>
+</jtlshopplugin>
