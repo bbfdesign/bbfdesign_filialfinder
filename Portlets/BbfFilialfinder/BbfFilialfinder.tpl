@@ -38,6 +38,10 @@
             --bbf-ff-shadow: 0 {$ffData.settings.styling_shadow_intensity|default:'2'}px {$ffData.settings.styling_shadow_intensity|default:'2' * 4}px rgba(0,0,0,0.1);
             --bbf-ff-border: {$ffData.settings.styling_border_color|default:'#e5e7eb'};
         }
+        {* Custom CSS from CSS-Editor *}
+        {if !empty($ffData.settings.custom_css)}
+            {$ffData.settings.custom_css}
+        {/if}
     </style>
 
     {* ===== Main wrapper ===== *}
