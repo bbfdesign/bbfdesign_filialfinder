@@ -1033,3 +1033,9 @@
         padding: 0.75rem 0.875rem;
     }
 }
+
+/* ── SVG Marker Icon (no background/border from Leaflet divIcon) ── */
+.bbf-filialfinder-marker {
+    background: none !important;
+    border: none !important;
+}

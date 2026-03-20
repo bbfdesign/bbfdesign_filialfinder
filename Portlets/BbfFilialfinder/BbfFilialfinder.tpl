@@ -624,22 +624,56 @@
 
             var map = L.map(mapEl, { scrollWheelZoom: false }).setView([centerLat, centerLng], zoom);
 
+            {* Set Leaflet default icon path as fallback *}
+            var baseUrl = '{if $ffBaseUrl}{$ffBaseUrl|escape:"javascript"}{else}/plugins/bbfdesign_filialfinder/{/if}';
+            L.Icon.Default.imagePath = baseUrl + 'vendor/leaflet/images/';
+
             var tileUrl = 'https://{ldelim}s{rdelim}.tile.openstreetmap.org/{ldelim}z{rdelim}/{ldelim}x{rdelim}/{ldelim}y{rdelim}.png';
+            var parsedSettings = null;
             try {
                 var settingsStr = wrapper.getAttribute('data-settings');
                 if (settingsStr) {
-                    var s = JSON.parse(settingsStr);
-                    if (s._resolved_tile_url) tileUrl = s._resolved_tile_url;
+                    parsedSettings = JSON.parse(settingsStr);
+                    if (parsedSettings._resolved_tile_url) tileUrl = parsedSettings._resolved_tile_url;
                 }
             } catch(e) {}
             L.tileLayer(tileUrl, {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
+            {* SVG marker icon factory — uses branch color or primary color *}
+            function createSvgIcon(color) {
+                return L.divIcon({
+                    html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="28" height="42">' +
+                          '<path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z"' +
+                          ' fill="' + color + '" stroke="#fff" stroke-width="1.5"/>' +
+                          '<circle cx="12" cy="12" r="5" fill="#fff"/></svg>',
+                    className: 'bbf-filialfinder-marker',
+                    iconSize: [28, 42],
+                    iconAnchor: [14, 42],
+                    popupAnchor: [0, -42]
+                });
+            }
+
+            var defaultColor = (parsedSettings && (parsedSettings.marker_icon_svg_color || parsedSettings.styling_primary_color)) || '#C8B831';
+            var iconType = (parsedSettings && parsedSettings.marker_icon_type) || 'svg';
+            var customIconUrl = (parsedSettings && parsedSettings.marker_custom_icon_url) || '';
+
+            function createMarkerIcon(branch) {
+                if (iconType === 'custom' && customIconUrl) {
+                    return L.icon({ iconUrl: customIconUrl, iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32] });
+                }
+                if (iconType === 'default') {
+                    return new L.Icon.Default();
+                }
+                return createSvgIcon(branch.markerColor || defaultColor);
+            }
+
             var markerGroup = [];
             var markerMap = {};
             validBranches.forEach(function(b) {
-                var marker = L.marker([b.lat, b.lng]).addTo(map);
+                var icon = createMarkerIcon(b);
+                var marker = L.marker([b.lat, b.lng], { icon: icon }).addTo(map);
                 var popupHtml = '<strong>' + b.name + '</strong><br>' +
                     b.street + ', ' + b.zip + ' ' + b.city +
                     (b.phone ? '<br>Tel: <a href="tel:' + encodeURIComponent(b.phone) + '">' + b.phone + '</a>' : '');
@@ -648,7 +682,10 @@
                 markerMap[b.id] = marker;
             });
 
-            if (markerGroup.length > 1) {
+            {* Fix 6: proper zoom for single vs multiple markers *}
+            if (markerGroup.length === 1) {
+                map.setView(markerGroup[0], zoom);
+            } else if (markerGroup.length > 1) {
                 map.fitBounds(markerGroup, { padding: [30, 30] });
             }
 

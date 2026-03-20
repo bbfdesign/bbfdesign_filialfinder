@@ -141,11 +141,22 @@
 
 /* ── Layout Default: Side by Side ── */
 .bbf-filialfinder-layout--default {
-    gap: 20px;
+    gap: 24px;
+    align-items: stretch;
 }
 
 .bbf-filialfinder-list-col {
-    flex: 0 0 360px;
+    flex: 0 0 420px;
+}
+
+.bbf-filialfinder-map-col {
+    flex: 1 1 auto;
+    min-height: 450px;
+}
+
+.bbf-filialfinder-map-col .bbf-filialfinder-map {
+    height: 100% !important;
+    min-height: 450px;
 }
 
 .bbf-filialfinder-list {

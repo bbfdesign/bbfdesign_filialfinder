@@ -252,6 +252,52 @@
     </div>
   </div>
 
+  {* ── Card 5: Marker-Icon ── *}
+  <div class="bbf-card">
+    <div class="bbf-card-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Marker-Icon
+    </div>
+
+    <div class="bbf-form-group">
+      <label class="bbf-form-label">Icon-Typ</label>
+      <div class="bbf-flex bbf-gap-16" style="flex-wrap: wrap;">
+        <label class="bbf-flex bbf-gap-8" style="cursor: pointer;">
+          <input type="radio" name="setting_marker_icon_type" value="svg"{if $allSettings.marker_icon_type|default:'svg' eq 'svg'} checked{/if} onchange="document.getElementById('bbf-marker-color-group').style.display='block';document.getElementById('bbf-custom-marker-group').style.display='none';"> SVG-Pin (Plugin-Farbe)
+        </label>
+        <label class="bbf-flex bbf-gap-8" style="cursor: pointer;">
+          <input type="radio" name="setting_marker_icon_type" value="default"{if $allSettings.marker_icon_type|default:'svg' eq 'default'} checked{/if} onchange="document.getElementById('bbf-marker-color-group').style.display='none';document.getElementById('bbf-custom-marker-group').style.display='none';"> Leaflet Standard
+        </label>
+        <label class="bbf-flex bbf-gap-8" style="cursor: pointer;">
+          <input type="radio" name="setting_marker_icon_type" value="custom"{if $allSettings.marker_icon_type|default:'svg' eq 'custom'} checked{/if} onchange="document.getElementById('bbf-marker-color-group').style.display='none';document.getElementById('bbf-custom-marker-group').style.display='block';"> Eigenes Bild
+        </label>
+      </div>
+    </div>
+
+    <div class="bbf-form-group" id="bbf-marker-color-group" style="display:{if $allSettings.marker_icon_type|default:'svg' eq 'svg'}block{else}none{/if}">
+      <label class="bbf-form-label">Marker-Farbe</label>
+      <input type="color" name="setting_marker_icon_svg_color" value="{$allSettings.marker_icon_svg_color|default:'#C8B831'}" style="width:60px;height:36px;border:1px solid #ddd;border-radius:4px;cursor:pointer;">
+      <p class="bbf-form-hint">Farbe des SVG-Marker-Pins auf der Karte.</p>
+    </div>
+
+    <div class="bbf-form-group" id="bbf-custom-marker-group" style="display:{if $allSettings.marker_icon_type|default:'svg' eq 'custom'}block{else}none{/if}">
+      <label class="bbf-form-label">Eigenes Marker-Bild URL (PNG/SVG, empfohlen 32x32 bis 64x64)</label>
+      <input type="text" name="setting_marker_custom_icon_url" class="bbf-form-control" value="{$allSettings.marker_custom_icon_url|default:''|escape:'html'}" placeholder="https://example.com/marker.png">
+      <p class="bbf-form-hint">Vollständige URL zum eigenen Marker-Bild.</p>
+    </div>
+
+    <div style="margin-top:12px;padding:12px;background:#f8f9fa;border-radius:6px;">
+      <strong>Vorschau:</strong>
+      <div style="margin-top:8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="28" height="42">
+          <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="{$allSettings.marker_icon_svg_color|default:'#C8B831'}" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="12" cy="12" r="5" fill="#fff"/>
+        </svg>
+        <span style="margin-left:8px;font-size:0.85rem;color:#666;">Aktueller SVG-Pin</span>
+      </div>
+    </div>
+  </div>
+
   {* ── Save Button ── *}
   <div class="bbf-flex bbf-gap-8" style="justify-content: flex-end;">
     <button type="button" class="bbf-btn bbf-btn-primary" onclick="bbfSaveSettings('bbf-map-provider-form', 'map_provider')">

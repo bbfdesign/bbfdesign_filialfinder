@@ -90,6 +90,15 @@ class OpeningStatusService
         }
 
         if (!$todayHours || !(int)$todayHours->is_open) {
+            // No hours configured at all → don't show a misleading "closed" status
+            if (empty($hours)) {
+                return [
+                    'status'      => 'unknown',
+                    'text'        => '',
+                    'cssClass'    => '',
+                    'nextOpening' => null,
+                ];
+            }
             return [
                 'status'      => 'closed',
                 'text'        => $closedText,
