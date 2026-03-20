@@ -90,28 +90,29 @@
                                      aria-label="{$branch.name|escape:'htmlall'} - {$branch.street|escape:'htmlall'}, {$branch.city|escape:'htmlall'}">
                                     <div class="bbf-filialfinder-card-body">
                                         <h3 class="bbf-filialfinder-card-name">{$branch.name|escape:'html'}</h3>
-                                        <p class="bbf-filialfinder-card-address">
-                                            {$branch.street|escape:'html'}<br>
-                                            {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-                                            {if $ffData.settings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
-                                        </p>
-                                        {if $branch.phone}
+                                        {if $ffData.settings.card_show_address != '0'}
+                                            <p class="bbf-filialfinder-card-address">
+                                                {$branch.street|escape:'html'}, {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
+                                                {if $ffData.settings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
+                                            </p>
+                                        {/if}
+                                        {if $ffData.settings.card_show_phone != '0' && $branch.phone}
                                             <p class="bbf-filialfinder-card-phone">
                                                 Telefon: <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
                                             </p>
                                         {/if}
-                                        {if $branch.email}
+                                        {if $ffData.settings.card_show_email == '1' && $branch.email}
                                             <p class="bbf-filialfinder-card-email">
                                                 <a href="mailto:{$branch.email|escape:'htmlall'}">{$branch.email|escape:'html'}</a>
                                             </p>
                                         {/if}
-                                        {if $ffData.settings.card_show_hours == '1' && $ffData.settings.card_hours_display != 'none' && !empty($branch.hours_summary)}
+                                        {if $ffData.settings.card_show_hours != '0' && !empty($branch.hours_summary)}
                                             <div class="bbf-filialfinder-card-hours">
                                                 <strong>Öffnungszeiten:</strong><br>
                                                 {$branch.hours_summary|escape:'html'|nl2br}
                                             </div>
                                         {/if}
-                                        {if $branch.status && $branch.status.text}
+                                        {if $ffData.settings.card_show_status != '0' && $branch.status && $branch.status.text}
                                             <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">
                                                 {if $ffData.settings.status_animated_dot == '1'}
                                                     <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
@@ -122,20 +123,27 @@
                                                 {/if}
                                             </span>
                                         {/if}
-                                        <span class="bbf-filialfinder-card-distance" data-ff-distance="{$branch.id|intval}"></span>
-                                        <div class="bbf-filialfinder-card-actions">
-                                            {if $branch.latitude && $branch.longitude}
-                                                <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
-                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
-                                                    Route berechnen
-                                                </a>
-                                            {else}
-                                                <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
-                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
-                                                    Auf Karte zeigen
-                                                </a>
-                                            {/if}
-                                        </div>
+                                        {if $ffData.settings.card_show_description == '1' && $branch.description}
+                                            <p class="bbf-filialfinder-card-description">{$branch.description|escape:'html'}</p>
+                                        {/if}
+                                        {if $ffData.settings.card_show_distance != '0'}
+                                            <span class="bbf-filialfinder-card-distance" data-ff-distance="{$branch.id|intval}"></span>
+                                        {/if}
+                                        {if $ffData.settings.card_show_route_btn != '0'}
+                                            <div class="bbf-filialfinder-card-actions">
+                                                {if $branch.latitude && $branch.longitude}
+                                                    <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
+                                                       class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                        Route berechnen
+                                                    </a>
+                                                {else}
+                                                    <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
+                                                       class="bbf-filialfinder-btn bbf-filialfinder-btn--route" target="_blank" rel="noopener noreferrer">
+                                                        Auf Karte zeigen
+                                                    </a>
+                                                {/if}
+                                            </div>
+                                        {/if}
                                     </div>
                                 </div>
                             {/foreach}
@@ -173,31 +181,36 @@
                                  data-branch-id="{$branch.id|intval}"
                                  data-lat="{$branch.latitude|escape:'htmlall'}"
                                  data-lng="{$branch.longitude|escape:'htmlall'}">
-                                {if $branch.image_path}
+                                {if $ffData.settings.card_show_image != '0' && $branch.image_path}
                                     <div class="bbf-filialfinder-card-image">
                                         <img src="{$branch.image_path|escape:'htmlall'}" alt="{$branch.name|escape:'htmlall'}" loading="lazy">
                                     </div>
                                 {/if}
                                 <div class="bbf-filialfinder-card-body">
                                     <h3 class="bbf-filialfinder-card-name">{$branch.name|escape:'html'}</h3>
-                                    <p class="bbf-filialfinder-card-address">
-                                        {$branch.street|escape:'html'}<br>
-                                        {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-                                    </p>
-                                    {if $branch.status}
-                                        <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status>
+                                    {if $ffData.settings.card_show_address != '0'}
+                                        <p class="bbf-filialfinder-card-address">
+                                            {$branch.street|escape:'html'}, {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
+                                        </p>
+                                    {/if}
+                                    {if $ffData.settings.card_show_status != '0' && $branch.status && $branch.status.text}
+                                        <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">
                                             {if $ffData.settings.status_animated_dot == '1'}
                                                 <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
                                             {/if}
                                             <span class="bbf-filialfinder-status-text">{$branch.status.text|escape:'html'}</span>
                                         </span>
                                     {/if}
-                                    <span class="bbf-filialfinder-card-distance" data-ff-distance="{$branch.id|intval}"></span>
-                                    <div class="bbf-filialfinder-card-actions">
-                                        <button type="button" class="bbf-filialfinder-btn bbf-filialfinder-btn--info" data-ff-detail-btn="{$branch.id|intval}">
-                                            Mehr Info
-                                        </button>
-                                    </div>
+                                    {if $ffData.settings.card_show_distance != '0'}
+                                        <span class="bbf-filialfinder-card-distance" data-ff-distance="{$branch.id|intval}"></span>
+                                    {/if}
+                                    {if $ffData.settings.card_show_detail_btn != '0'}
+                                        <div class="bbf-filialfinder-card-actions">
+                                            <button type="button" class="bbf-filialfinder-btn bbf-filialfinder-btn--info" data-ff-detail-btn="{$branch.id|intval}">
+                                                Mehr Info
+                                            </button>
+                                        </div>
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -407,11 +420,11 @@
                             <thead>
                                 <tr>
                                     <th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--name">Name</th>
-                                    <th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--address">Adresse</th>
-                                    <th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--phone">Telefon</th>
-                                    <th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--status">Status</th>
-                                    <th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--distance">Entfernung</th>
-                                    <th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--actions"></th>
+                                    {if $ffData.settings.card_show_address != '0'}<th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--address">Adresse</th>{/if}
+                                    {if $ffData.settings.card_show_phone != '0'}<th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--phone">Telefon</th>{/if}
+                                    {if $ffData.settings.card_show_status != '0'}<th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--status">Status</th>{/if}
+                                    {if $ffData.settings.card_show_distance != '0'}<th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--distance">Entfernung</th>{/if}
+                                    {if $ffData.settings.card_show_route_btn != '0'}<th class="bbf-filialfinder-table-th bbf-filialfinder-table-th--actions"></th>{/if}
                                 </tr>
                             </thead>
                             <tbody>
@@ -423,46 +436,56 @@
                                         <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--name" data-label="Name">
                                             <strong>{$branch.name|escape:'html'}</strong>
                                         </td>
-                                        <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--address" data-label="Adresse">
-                                            {$branch.street|escape:'html'}, {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-                                        </td>
-                                        <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--phone" data-label="Telefon">
-                                            {if $branch.phone}
-                                                <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
-                                            {else}
-                                                &ndash;
-                                            {/if}
-                                        </td>
-                                        <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--status" data-label="Status">
-                                            {if $branch.status}
-                                                <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status>
-                                                    {if $ffData.settings.status_animated_dot == '1'}
-                                                        <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
-                                                    {/if}
-                                                    <span class="bbf-filialfinder-status-text">{$branch.status.text|escape:'html'}</span>
-                                                </span>
-                                            {else}
-                                                &ndash;
-                                            {/if}
-                                        </td>
-                                        <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--distance" data-label="Entfernung">
-                                            <span data-ff-distance="{$branch.id|intval}">&ndash;</span>
-                                        </td>
-                                        <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--actions">
-                                            {if $branch.latitude && $branch.longitude}
-                                                <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
-                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
-                                                   target="_blank" rel="noopener noreferrer" title="Route berechnen">
-                                                    Route
-                                                </a>
-                                            {else}
-                                                <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
-                                                   class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
-                                                   target="_blank" rel="noopener noreferrer" title="Auf Karte zeigen">
-                                                    Karte
-                                                </a>
-                                            {/if}
-                                        </td>
+                                        {if $ffData.settings.card_show_address != '0'}
+                                            <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--address" data-label="Adresse">
+                                                {$branch.street|escape:'html'}, {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
+                                            </td>
+                                        {/if}
+                                        {if $ffData.settings.card_show_phone != '0'}
+                                            <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--phone" data-label="Telefon">
+                                                {if $branch.phone}
+                                                    <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
+                                                {else}
+                                                    &ndash;
+                                                {/if}
+                                            </td>
+                                        {/if}
+                                        {if $ffData.settings.card_show_status != '0'}
+                                            <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--status" data-label="Status">
+                                                {if $branch.status && $branch.status.text}
+                                                    <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">
+                                                        {if $ffData.settings.status_animated_dot == '1'}
+                                                            <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
+                                                        {/if}
+                                                        <span class="bbf-filialfinder-status-text">{$branch.status.text|escape:'html'}</span>
+                                                    </span>
+                                                {else}
+                                                    &ndash;
+                                                {/if}
+                                            </td>
+                                        {/if}
+                                        {if $ffData.settings.card_show_distance != '0'}
+                                            <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--distance" data-label="Entfernung">
+                                                <span data-ff-distance="{$branch.id|intval}">&ndash;</span>
+                                            </td>
+                                        {/if}
+                                        {if $ffData.settings.card_show_route_btn != '0'}
+                                            <td class="bbf-filialfinder-table-td bbf-filialfinder-table-td--actions">
+                                                {if $branch.latitude && $branch.longitude}
+                                                    <a href="https://www.google.com/maps/dir/?api=1&destination={$branch.latitude|escape:'url'},{$branch.longitude|escape:'url'}"
+                                                       class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
+                                                       target="_blank" rel="noopener noreferrer" title="Route berechnen">
+                                                        Route
+                                                    </a>
+                                                {else}
+                                                    <a href="https://www.google.com/maps/search/?api=1&query={$branch.street|escape:'url'}+{$branch.zip|escape:'url'}+{$branch.city|escape:'url'}"
+                                                       class="bbf-filialfinder-btn bbf-filialfinder-btn--route bbf-filialfinder-btn--sm"
+                                                       target="_blank" rel="noopener noreferrer" title="Auf Karte zeigen">
+                                                        Karte
+                                                    </a>
+                                                {/if}
+                                            </td>
+                                        {/if}
                                     </tr>
                                 {/foreach}
                             </tbody>

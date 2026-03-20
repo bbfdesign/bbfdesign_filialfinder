@@ -63,9 +63,12 @@
     margin: 0 0 4px;
 }
 
+.bbf-filialfinder-card a,
+.bbf-filialfinder-card-phone,
 .bbf-filialfinder-card-phone a,
+.bbf-filialfinder-card-email,
 .bbf-filialfinder-card-email a {
-    color: #1a1a1a;
+    color: #1a1a1a !important;
     text-decoration: none;
     font-weight: 400;
 }
