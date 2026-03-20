@@ -9,8 +9,8 @@
 <div class="bbf-filialfinder-wrapper{if $ffClass} {$ffClass}{/if}"
      data-filialfinder
      data-provider="{$bbfMapProvider|escape:'htmlall'}"
-     data-status='{$bbfStatusData}'
-     data-settings='{$bbfSettings|json_encode}'
+     data-status="{$bbfStatusData|escape:'htmlall'}"
+     data-settings="{$bbfSettings|json_encode|escape:'htmlall'}"
      id="bbf-filialfinder-{$bbfInstanceId|default:'1'}">
 
     {* Title block *}

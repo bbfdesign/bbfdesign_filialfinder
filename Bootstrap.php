@@ -252,10 +252,32 @@ class Bootstrap extends Bootstrapper
 
     /**
      * Check if current page contains the filialfinder.
+     * Detects OPC portlets and Smarty variable usage.
      */
     private static function isFilialfinderPage(): bool
     {
-        return true; // For now, always load — can be refined later
+        // Check if page HTML (already in output buffer) contains filialfinder markers
+        try {
+            // Check for OPC portlet presence via pq()
+            $pq = \JTL\pq('[data-filialfinder], .bbf-filialfinder-wrapper');
+            if ($pq->length > 0) {
+                return true;
+            }
+
+            // Check if Smarty rendered bbf_filialfinder output (wrapper div with our ID prefix)
+            $body = \JTL\pq('body');
+            if ($body->length > 0) {
+                $html = $body->html();
+                if ($html !== null && str_contains($html, 'bbf-filialfinder-')) {
+                    return true;
+                }
+            }
+        } catch (\Throwable $e) {
+            // pq() not available — fall back to loading assets
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -123,6 +123,13 @@
       </div>
     </div>
 
+    {* MapTiler API-Key *}
+    <div class="bbf-form-group" id="bbf-maptiler-key-group" style="display:{if $allSettings.osm_tile_server|default:'osm_default' eq 'maptiler'}block{else}none{/if}">
+      <label class="bbf-form-label">MapTiler API-Key</label>
+      <input type="text" name="setting_osm_maptiler_api_key" class="bbf-form-control" value="{$allSettings.osm_maptiler_api_key|default:''|escape:'html'}" placeholder="Ihr MapTiler API-Key">
+      <p class="bbf-form-hint">Registrieren Sie sich kostenlos bei <a href="https://www.maptiler.com/" target="_blank" rel="noopener">maptiler.com</a> und erstellen Sie einen API-Key.</p>
+    </div>
+
     {* Custom Tile URL *}
     <div class="bbf-form-group" id="bbf-custom-tile-group" style="display:{if $allSettings.osm_tile_server|default:'osm_default' eq 'custom'}block{else}none{/if}">
       <label class="bbf-form-label">Eigene Tile-URL</label>
@@ -279,5 +286,6 @@ function bbfSelectTileServer(el, serverKey) {
     if (radio) radio.checked = true;
 
     document.getElementById('bbf-custom-tile-group').style.display = (serverKey === 'custom') ? 'block' : 'none';
+    document.getElementById('bbf-maptiler-key-group').style.display = (serverKey === 'maptiler') ? 'block' : 'none';
 }
 </script>

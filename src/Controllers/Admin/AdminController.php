@@ -319,6 +319,7 @@ class AdminController
                 if ($coords !== null) {
                     $data['latitude'] = $coords['lat'];
                     $data['longitude'] = $coords['lng'];
+                    $data['_geocoded'] = true;
                 }
             } catch (\Throwable $e) {
                 // Geocoding failed silently — coordinates remain null
@@ -392,10 +393,14 @@ class AdminController
 
         try {
             $branchId = $this->branchService->saveFull($data, $hours, $specialDays);
+            $message = 'Filiale erfolgreich gespeichert.';
+            if (!empty($data['_geocoded'])) {
+                $message .= ' Koordinaten automatisch ermittelt: ' . round($data['latitude'], 6) . ', ' . round($data['longitude'], 6);
+            }
             return [
                 'success'  => true,
                 'flag'     => true,
-                'message'  => 'Filiale erfolgreich gespeichert.',
+                'message'  => $message,
                 'branchId' => $branchId,
             ];
         } catch (\Throwable $e) {

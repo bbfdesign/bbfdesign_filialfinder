@@ -139,10 +139,16 @@ class BbfFilialfinder extends Portlet
                 'cartodb_positron'  => 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
                 'cartodb_dark'      => 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
                 'openfreemap'       => 'https://tiles.openfreemap.org/tile/{z}/{x}/{y}.png',
+                'maptiler'          => 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key={apikey}',
                 'custom'            => $allSettings['osm_custom_tile_url'] ?? '',
             ];
             $tileKey = $allSettings['osm_tile_server'] ?? 'osm_standard';
-            $allSettings['_resolved_tile_url'] = $tileServers[$tileKey] ?? $tileServers['osm_standard'];
+            $resolvedUrl = $tileServers[$tileKey] ?? $tileServers['osm_standard'];
+            // Replace {apikey} placeholder with stored API key (e.g. MapTiler)
+            if (str_contains($resolvedUrl, '{apikey}')) {
+                $resolvedUrl = str_replace('{apikey}', $allSettings['osm_maptiler_api_key'] ?? '', $resolvedUrl);
+            }
+            $allSettings['_resolved_tile_url'] = $resolvedUrl;
 
             return [
                 'branches'         => $branches,

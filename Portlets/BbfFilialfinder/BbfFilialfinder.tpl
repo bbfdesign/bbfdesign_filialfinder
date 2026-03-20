@@ -22,7 +22,7 @@
     <div class="bbf-filialfinder-wrapper bbf-filialfinder-wrapper--{$ffInstanceId} {$instance->getStyleClasses()}"
          data-filialfinder
          data-provider="{$ffProvider|escape:'htmlall'}"
-         data-settings='{$ffData.settings|json_encode}'
+         data-settings="{$ffData.settings|json_encode|escape:'htmlall'}"
          id="bbf-filialfinder-{$ffInstanceId}"
          style="{$instance->getStyleString()}">
 
@@ -629,7 +629,20 @@
                 centerLat = validBranches[0].lat;
                 centerLng = validBranches[0].lng;
             } else {
-                zoom = 6; {* Zoom out to show all of Germany when no markers *}
+                {* No valid coordinates — show fallback message with external map links *}
+                var fallbackHtml = '<div style="text-align:center;padding:40px 20px;color:#666;">' +
+                    '<p style="font-size:16px;margin-bottom:12px;">Karten-Vorschau nicht verf&uuml;gbar (Koordinaten fehlen)</p>';
+                if (branches.length > 0) {
+                    var b = branches[0];
+                    var addr = encodeURIComponent((b.street || '') + ' ' + (b.zip || '') + ' ' + (b.city || ''));
+                    fallbackHtml += '<p>' +
+                        '<a href="https://www.openstreetmap.org/search?query=' + addr + '" target="_blank" rel="noopener noreferrer" style="margin-right:12px;">Auf OpenStreetMap suchen</a>' +
+                        '<a href="https://www.google.com/maps/search/?api=1&query=' + addr + '" target="_blank" rel="noopener noreferrer">Auf Google Maps suchen</a>' +
+                        '</p>';
+                }
+                fallbackHtml += '</div>';
+                mapEl.innerHTML = fallbackHtml;
+                return;
             }
 
             var map = L.map(mapEl, { scrollWheelZoom: false }).setView([centerLat, centerLng], zoom);
