@@ -417,7 +417,7 @@
       </div>
 
       {* ── Form Actions ── *}
-      <div class="bbf-form-group" style="display:flex;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--bbf-border);">
+      <div style="position:sticky;bottom:0;background:#fff;border-top:1px solid #e5e7eb;padding:12px 24px;z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,0.06);display:flex;gap:12px;margin:24px -24px -24px;">
         <button type="submit" class="bbf-btn bbf-btn-primary">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Speichern

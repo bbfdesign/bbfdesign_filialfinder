@@ -700,7 +700,10 @@
                 if (iconType === 'default') {
                     return new L.Icon.Default();
                 }
-                return createSvgIcon(branch.markerColor || defaultColor);
+                var branchColor = branch.markerColor;
+                // Treat empty or default-red (#e74c3c) as "use global color"
+                if (!branchColor || branchColor === '#e74c3c') branchColor = defaultColor;
+                return createSvgIcon(branchColor);
             }
 
             var markerGroup = [];
@@ -732,6 +735,16 @@
 
             {* Invalidate size after a short delay (OPC may render async) *}
             setTimeout(function() { map.invalidateSize(); }, 300);
+
+            {* Auto-activate first card and open its popup *}
+            var firstCard = wrapper.querySelector('.bbf-filialfinder-card');
+            if (firstCard) {
+                firstCard.classList.add('bbf-filialfinder-card--active');
+                var firstId = parseInt(firstCard.getAttribute('data-branch-id'));
+                if (firstId && markerMap[firstId]) {
+                    markerMap[firstId].openPopup();
+                }
+            }
         }
 
         {* Load Leaflet dynamically (avoids OPC moving <script src> tags) *}
