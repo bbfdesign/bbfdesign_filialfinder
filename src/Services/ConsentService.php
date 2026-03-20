@@ -13,7 +13,11 @@ class ConsentService
 
     public function isConsentRequired(): bool
     {
-        return ($this->settings->get('consent_enabled', '1')) === '1';
+        // The plugin registers vendors in info.xml (ServicesRequiringConsent).
+        // JTL's Consent Manager handles all consent logic — the plugin's own
+        // consent box is redundant and causes double-prompts.
+        // Return false so the inline consent placeholder is never rendered.
+        return false;
     }
 
     public function getMapProviderName(): string

@@ -125,7 +125,7 @@
       <div class="bbf-tab-content active" id="tab-general">
         <div class="bbf-form-group">
           <label class="bbf-form-label" for="bbf-field-name">Name <span style="color:var(--bbf-danger);">*</span></label>
-          <input type="text" class="bbf-form-control" id="bbf-field-name" name="name" required placeholder="z.B. Filiale Berlin Mitte">
+          <input type="text" class="bbf-form-control" id="bbf-field-name" name="name" required placeholder="z.B. Filiale Berlin Mitte" oninput="var d=document.getElementById('bbf-branch-name-display');if(d)d.textContent=this.value;">
         </div>
 
         <div class="bbf-form-group">
@@ -407,7 +407,7 @@ function bbfShowBranchForm(id) {
   document.getElementById('bbf-branch-list').style.display = 'none';
   document.getElementById('bbf-branch-form').style.display = '';
   document.getElementById('bbf-field-branch_id').value = id || 0;
-  document.getElementById('bbf-branch-form-title').textContent = id ? 'Filiale bearbeiten' : 'Neue Filiale anlegen';
+  document.getElementById('bbf-branch-form-title').innerHTML = id ? 'Filiale bearbeiten: <span id="bbf-branch-name-display"></span>' : 'Neue Filiale anlegen';
   if (id) {
     bbfLoadBranchData(id);
   } else {
@@ -488,6 +488,8 @@ function bbfLoadBranchData(id) {
           if (el) el.value = b[f] || '';
         });
         document.getElementById('bbf-field-is_active').checked = !!b.is_active;
+        var nameDisplay = document.getElementById('bbf-branch-name-display');
+        if (nameDisplay) nameDisplay.textContent = b.name || '';
         if (b.marker_color) {
           document.getElementById('bbf-field-marker_color').value = b.marker_color;
           document.getElementById('bbf-field-marker_color_hex').value = b.marker_color;
