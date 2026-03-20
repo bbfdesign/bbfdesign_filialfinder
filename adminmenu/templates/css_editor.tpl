@@ -1,3 +1,14 @@
+{* ===== CodeMirror CSS/JS (MIT License) ===== *}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/monokai.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/dialog/dialog.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/search/search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/addon/dialog/dialog.min.js"></script>
+
 {* ===== Card 1: Benutzerdefiniertes CSS ===== *}
 <div class="bbf-card">
     <div class="bbf-card-title">
@@ -6,10 +17,11 @@
     </div>
 
     <div class="bbf-form-group">
-        <textarea id="bbf-css-textarea" name="custom_css" rows="18"
-                  style="width:100%;min-height:400px;font-family:'Consolas','Monaco','Courier New',monospace;font-size:13px;line-height:1.6;padding:16px;border:1px solid var(--bbf-border);border-radius:var(--bbf-card-radius);background:#1e1e2e;color:#cdd6f4;resize:vertical;tab-size:2;"
-                  spellcheck="false">{$customCss|default:''}</textarea>
-        <div class="bbf-form-hint" style="margin-top:8px;">Eigenes CSS wird nach den Standard-Styles geladen und &uuml;berschreibt diese bei Bedarf.</div>
+        <textarea id="bbf-css-textarea" name="custom_css" style="display:none;">{$customCss|default:''}</textarea>
+        <div id="bbf-css-editor" style="border:1px solid var(--bbf-border);border-radius:var(--bbf-card-radius);overflow:hidden;"></div>
+        <div class="bbf-form-hint" style="margin-top:8px;">
+            Eigenes CSS wird nach den Standard-Styles geladen. <strong>Strg+F</strong> zum Suchen, <strong>Strg+H</strong> zum Ersetzen.
+        </div>
     </div>
 
     <div class="bbf-flex-between" style="margin-top:16px;">
@@ -21,7 +33,7 @@
     </div>
 </div>
 
-{* ===== Card 2: Verfügbare CSS-Klassen ===== *}
+{* ===== Card 2: Verf&uuml;gbare CSS-Klassen ===== *}
 <div class="bbf-card">
     <div class="bbf-card-title">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
@@ -37,23 +49,64 @@
         </thead>
         <tbody>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-wrapper</code></td><td>Hauptcontainer</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-layout--default</code></td><td>Standard-Layout (Liste + Karte nebeneinander)</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-list</code></td><td>Listen-Container</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card</code></td><td>Einzelne Filial-Karte</td></tr>
+            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-layout--default</code></td><td>Standard-Layout (Liste + Karte)</td></tr>
+            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card</code></td><td>Filial-Karte</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card--active</code></td><td>Aktive/Ausgew&auml;hlte Filiale</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card-name</code></td><td>Filialname (h3)</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card-address</code></td><td>Adresse</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card-phone</code></td><td>Telefonnummer</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card-actions</code></td><td>Aktionsbereich (Buttons)</td></tr>
+            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card-hours</code></td><td>&Ouml;ffnungszeiten-Block</td></tr>
+            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-card-columns</code></td><td>2-Spalten Container (Info + &Ouml;ffnungszeiten)</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-map</code></td><td>Karten-Container</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-title</code></td><td>&Uuml;berschrift</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-status</code></td><td>&Ouml;ffnungsstatus Badge</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-status--open</code></td><td>Ge&ouml;ffnet (gr&uuml;n)</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-status--closed</code></td><td>Geschlossen (rot)</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-status--closing</code></td><td>Schlie&szlig;t bald (orange)</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-status--opening</code></td><td>&Ouml;ffnet bald (blau)</td></tr>
-            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-btn</code></td><td>Button Basis-Klasse</td></tr>
             <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-btn--route</code></td><td>Route-berechnen Button</td></tr>
+            <tr><td><code style="background:var(--bbf-primary-light);padding:2px 8px;border-radius:4px;font-size:12px;color:var(--bbf-primary-dark, #9b1b6a);">.bbf-filialfinder-marker</code></td><td>SVG Kartenmarker</td></tr>
         </tbody>
     </table>
 </div>
+
+<script>
+(function() {
+    var textarea = document.getElementById('bbf-css-textarea');
+    var editorDiv = document.getElementById('bbf-css-editor');
+    if (!textarea || !editorDiv || typeof CodeMirror === 'undefined') return;
+
+    window.bbfCssEditor = CodeMirror(editorDiv, {
+        value: textarea.value,
+        mode: 'css',
+        theme: 'monokai',
+        lineNumbers: true,
+        matchBrackets: true,
+        indentUnit: 2,
+        tabSize: 2,
+        lineWrapping: true,
+        extraKeys: {
+            'Ctrl-S': function() { bbfSaveCss(); },
+            'Cmd-S': function() { bbfSaveCss(); }
+        }
+    });
+    bbfCssEditor.setSize(null, 450);
+
+    // Sync back to textarea before save
+    var origSave = window.bbfSaveCss;
+    window.bbfSaveCss = function() {
+        textarea.value = bbfCssEditor.getValue();
+        if (typeof origSave === 'function') {
+            origSave();
+        } else {
+            var formData = new FormData();
+            formData.append('action', 'saveSettings');
+            formData.append('setting_custom_css', bbfCssEditor.getValue());
+            formData.append('settings_page', 'css_editor');
+            formData.append('is_ajax', '1');
+            formData.append('jtl_token', typeof jtlToken !== 'undefined' ? jtlToken : '');
+            fetch(typeof postURL !== 'undefined' ? postURL : '', { method: 'POST', body: formData })
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    if (d.success && typeof bbfToast === 'function') bbfToast('CSS gespeichert', 'success');
+                });
+        }
+    };
+})();
+</script>

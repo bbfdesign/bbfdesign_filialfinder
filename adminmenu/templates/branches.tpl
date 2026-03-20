@@ -93,6 +93,14 @@
       </tbody>
     </table>
 
+    {* ── Bulk Action Bar (hidden until checkboxes selected) ── *}
+    <div id="bbf-bulk-bar" style="display:none;padding:10px 16px;background:var(--bbf-primary-light,#f0eed8);border:1px solid var(--bbf-primary,#C8B831);border-radius:8px;margin-top:12px;align-items:center;gap:12px;">
+      <span id="bbf-bulk-count" style="font-size:13px;font-weight:600;">0 ausgew&auml;hlt</span>
+      <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-secondary" onclick="bbfBulkAction('activate')">Aktivieren</button>
+      <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-secondary" onclick="bbfBulkAction('deactivate')">Deaktivieren</button>
+      <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-danger" onclick="bbfBulkAction('delete')">L&ouml;schen</button>
+    </div>
+
     {* ── Pagination ── *}
     <div class="bbf-pagination" id="bbf-branch-pagination"></div>
   </div>
@@ -701,8 +709,8 @@ function bbfToggleSelectAll(el) {
 function bbfUpdateBulkBar() {
   var checked = document.querySelectorAll('.bbf-branch-check:checked').length;
   var bar = document.getElementById('bbf-bulk-bar');
-  bar.style.display = checked > 0 ? '' : 'none';
-  document.getElementById('bbf-bulk-count').textContent = checked;
+  bar.style.display = checked > 0 ? 'flex' : 'none';
+  document.getElementById('bbf-bulk-count').textContent = checked + ' ausgew\u00e4hlt';
 }
 
 function bbfBulkAction(action) {

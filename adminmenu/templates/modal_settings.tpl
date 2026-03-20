@@ -34,76 +34,19 @@
             <div class="bbf-form-hint">Text des Detail-Buttons in der Filial-Karte</div>
         </div>
 
-        {* Galerie anzeigen *}
-        <div class="bbf-form-group">
-            <div class="bbf-flex-between">
-                <label class="bbf-form-label">Galerie anzeigen</label>
-                <label class="bbf-toggle">
-                    <input type="checkbox" name="setting_modal_show_gallery" value="1" {if $allSettings.modal_show_gallery|default:'1' == '1'}checked{/if}>
-                    <span class="bbf-toggle-slider"></span>
-                </label>
-            </div>
-            <div class="bbf-form-hint">Bildergalerie im Modal anzeigen</div>
-        </div>
-
-        {* Videos anzeigen *}
-        <div class="bbf-form-group">
-            <div class="bbf-flex-between">
-                <label class="bbf-form-label">Videos anzeigen</label>
-                <label class="bbf-toggle">
-                    <input type="checkbox" name="setting_modal_show_videos" value="1" {if $allSettings.modal_show_videos|default:'1' == '1'}checked{/if}>
-                    <span class="bbf-toggle-slider"></span>
-                </label>
-            </div>
-            <div class="bbf-form-hint">Videos im Modal anzeigen</div>
-        </div>
-
-        {* Beschreibung anzeigen *}
-        <div class="bbf-form-group">
-            <div class="bbf-flex-between">
-                <label class="bbf-form-label">Beschreibung anzeigen</label>
-                <label class="bbf-toggle">
-                    <input type="checkbox" name="setting_modal_show_description" value="1" {if $allSettings.modal_show_description|default:'1' == '1'}checked{/if}>
-                    <span class="bbf-toggle-slider"></span>
-                </label>
-            </div>
-            <div class="bbf-form-hint">Filialbeschreibung im Modal anzeigen</div>
-        </div>
-
-        {* Öffnungszeiten anzeigen *}
-        <div class="bbf-form-group">
-            <div class="bbf-flex-between">
-                <label class="bbf-form-label">&Ouml;ffnungszeiten anzeigen</label>
-                <label class="bbf-toggle">
-                    <input type="checkbox" name="setting_modal_show_hours" value="1" {if $allSettings.modal_show_hours|default:'1' == '1'}checked{/if}>
-                    <span class="bbf-toggle-slider"></span>
-                </label>
-            </div>
-            <div class="bbf-form-hint">&Ouml;ffnungszeiten-Tabelle im Modal anzeigen</div>
-        </div>
-
-        {* Karte im Modal anzeigen *}
-        <div class="bbf-form-group">
-            <div class="bbf-flex-between">
-                <label class="bbf-form-label">Karte im Modal anzeigen</label>
-                <label class="bbf-toggle">
-                    <input type="checkbox" name="setting_modal_show_map" value="1" {if $allSettings.modal_show_map|default:'1' == '1'}checked{/if}>
-                    <span class="bbf-toggle-slider"></span>
-                </label>
-            </div>
-            <div class="bbf-form-hint">Mini-Karte mit Standort im Modal anzeigen</div>
-        </div>
-
-        {* Route-Button anzeigen *}
-        <div class="bbf-form-group">
-            <div class="bbf-flex-between">
-                <label class="bbf-form-label">Route-Button anzeigen</label>
-                <label class="bbf-toggle">
-                    <input type="checkbox" name="setting_modal_show_directions" value="1" {if $allSettings.modal_show_directions|default:'1' == '1'}checked{/if}>
-                    <span class="bbf-toggle-slider"></span>
-                </label>
-            </div>
-            <div class="bbf-form-hint">&quot;Route berechnen&quot; Button im Modal anzeigen</div>
+        {* Modal-Inhalte als kompaktes 2-Spalten Grid *}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:16px;">
+            {foreach ['gallery' => 'Galerie', 'videos' => 'Videos', 'description' => 'Beschreibung', 'hours' => '&Ouml;ffnungszeiten', 'map' => 'Karte', 'directions' => 'Route-Button'] as $key => $label}
+                <div class="bbf-form-group" style="margin:0;padding:8px 0;border-bottom:1px solid var(--bbf-border);">
+                    <div class="bbf-flex-between">
+                        <label class="bbf-form-label" style="margin:0;font-size:13px;">{$label}</label>
+                        <label class="bbf-toggle">
+                            <input type="checkbox" name="setting_modal_show_{$key}" value="1" {if $allSettings["modal_show_{$key}"]|default:'1' == '1'}checked{/if}>
+                            <span class="bbf-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            {/foreach}
         </div>
 
         {* Modal-Breite *}
