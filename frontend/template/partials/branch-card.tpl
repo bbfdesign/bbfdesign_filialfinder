@@ -21,7 +21,7 @@
         <p class="bbf-filialfinder-card-address">
             {$branch.street|escape:'html'}<br>
             {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-            {if $branch.country}<br>{$branch.country|escape:'html'}{/if}
+            {if $bbfSettings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
         </p>
 
         {* Phone *}

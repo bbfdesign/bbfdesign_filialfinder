@@ -146,7 +146,7 @@
                         <address class="bbf-filialfinder-modal__address">
                             {if $branch.street}{$branch.street|escape:'html'}<br>{/if}
                             {if $branch.zip || $branch.city}{$branch.zip|escape:'html'} {$branch.city|escape:'html'}<br>{/if}
-                            {if $branch.country}{$branch.country|escape:'html'}{/if}
+                            {if $bbfSettings.card_show_country == '1' && $branch.country}{$branch.country|escape:'html'}{/if}
                         </address>
                     </div>
                 {/if}

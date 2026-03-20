@@ -360,16 +360,30 @@ class AdminController
             }
         }
 
-        // Parse opening hours
+        // Parse opening hours — form uses named keys (mon, tue, ...) not array indices
+        $dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
         $hours = [];
         for ($day = 0; $day < 7; $day++) {
-            $hours[$day] = [
-                'is_open'      => (int)($_POST['hours_is_open'][$day] ?? 0),
-                'open_time_1'  => $_POST['hours_open_1'][$day] ?? null,
-                'close_time_1' => $_POST['hours_close_1'][$day] ?? null,
-                'open_time_2'  => $_POST['hours_open_2'][$day] ?? null,
-                'close_time_2' => $_POST['hours_close_2'][$day] ?? null,
-            ];
+            $key = $dayKeys[$day];
+            // Support both form formats: named keys (hours_open_mon) and array indices (hours_is_open[0])
+            if (isset($_POST['hours_open_' . $key]) || isset($_POST['hours_open_time_1_' . $key])) {
+                $hours[$day] = [
+                    'is_open'      => (int)($_POST['hours_open_' . $key] ?? 0),
+                    'open_time_1'  => !empty($_POST['hours_open_time_1_' . $key]) ? $_POST['hours_open_time_1_' . $key] : null,
+                    'close_time_1' => !empty($_POST['hours_close_time_1_' . $key]) ? $_POST['hours_close_time_1_' . $key] : null,
+                    'open_time_2'  => !empty($_POST['hours_open_time_2_' . $key]) ? $_POST['hours_open_time_2_' . $key] : null,
+                    'close_time_2' => !empty($_POST['hours_close_time_2_' . $key]) ? $_POST['hours_close_time_2_' . $key] : null,
+                ];
+            } else {
+                // Fallback: array index format (hours_is_open[0])
+                $hours[$day] = [
+                    'is_open'      => (int)($_POST['hours_is_open'][$day] ?? 0),
+                    'open_time_1'  => !empty($_POST['hours_open_1'][$day]) ? $_POST['hours_open_1'][$day] : null,
+                    'close_time_1' => !empty($_POST['hours_close_1'][$day]) ? $_POST['hours_close_1'][$day] : null,
+                    'open_time_2'  => !empty($_POST['hours_open_2'][$day]) ? $_POST['hours_open_2'][$day] : null,
+                    'close_time_2' => !empty($_POST['hours_close_2'][$day]) ? $_POST['hours_close_2'][$day] : null,
+                ];
+            }
         }
 
         // Parse special days

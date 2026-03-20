@@ -177,9 +177,24 @@ class OpeningStatusService
         \DateTime $now,
         \DateTimeZone $timezone
     ): array {
+        // Normalize times to H:i:s format (DB may return H:i or H:i:s)
+        $currentTime = strlen($currentTime) === 5 ? $currentTime . ':00' : $currentTime;
+        $openTime = strlen($openTime) === 5 ? $openTime . ':00' : $openTime;
+        $closeTime = strlen($closeTime) === 5 ? $closeTime . ':00' : $closeTime;
+
         $current = strtotime($currentTime);
         $open = strtotime($openTime);
         $close = strtotime($closeTime);
+
+        // Guard against strtotime failures
+        if ($current === false || $open === false || $close === false) {
+            return [
+                'status'      => 'unknown',
+                'text'        => '',
+                'cssClass'    => '',
+                'nextOpening' => null,
+            ];
+        }
 
         if ($current >= $open && $current < $close) {
             $minutesUntilClose = ($close - $current) / 60;

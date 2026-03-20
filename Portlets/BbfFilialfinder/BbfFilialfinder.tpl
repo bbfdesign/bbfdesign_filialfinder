@@ -86,13 +86,14 @@
                                      data-branch-id="{$branch.id|intval}"
                                      data-lat="{$branch.latitude|escape:'htmlall'}"
                                      data-lng="{$branch.longitude|escape:'htmlall'}"
-                                     role="button" tabindex="0">
+                                     role="button" tabindex="0"
+                                     aria-label="{$branch.name|escape:'htmlall'} - {$branch.street|escape:'htmlall'}, {$branch.city|escape:'htmlall'}">
                                     <div class="bbf-filialfinder-card-body">
                                         <h3 class="bbf-filialfinder-card-name">{$branch.name|escape:'html'}</h3>
                                         <p class="bbf-filialfinder-card-address">
                                             {$branch.street|escape:'html'}<br>
                                             {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-                                            {if $branch.country}<br>{$branch.country|escape:'html'}{/if}
+                                            {if $ffData.settings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
                                         </p>
                                         {if $branch.phone}
                                             <p class="bbf-filialfinder-card-phone">
@@ -104,8 +105,8 @@
                                                 <a href="mailto:{$branch.email|escape:'htmlall'}">{$branch.email|escape:'html'}</a>
                                             </p>
                                         {/if}
-                                        {if $branch.status}
-                                            <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status>
+                                        {if $branch.status && $branch.status.text}
+                                            <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">
                                                 {if $ffData.settings.status_animated_dot == '1'}
                                                     <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
                                                 {/if}
@@ -309,7 +310,7 @@
                                             <p class="bbf-filialfinder-card-address">
                                                 {$branch.street|escape:'html'}<br>
                                                 {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-                                                {if $branch.country}<br>{$branch.country|escape:'html'}{/if}
+                                                {if $ffData.settings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
                                             </p>
                                             {if $branch.phone}
                                                 <p class="bbf-filialfinder-card-phone">
