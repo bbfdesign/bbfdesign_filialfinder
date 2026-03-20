@@ -18,11 +18,17 @@
     {assign var=ffBaseUrl value=$ffData.pluginBaseUrl|default:''}
     {assign var=ffInstanceId value=$instance->getId()|default:($smarty.now|md5|truncate:8:'')}
 
+    {* ===== Build branch JSON for data attribute (OPC moves <script> tags outside wrapper) ===== *}
+    {if !empty($ffData.branches)}
+        {capture assign=ffBranchesJson}[{foreach $ffData.branches as $branch name=markers}{ldelim}"id":{$branch.id|intval},"name":{$branch.name|json_encode},"street":{$branch.street|json_encode},"zip":{$branch.zip|json_encode},"city":{$branch.city|json_encode},"lat":{if $branch.latitude}{$branch.latitude}{else}null{/if},"lng":{if $branch.longitude}{$branch.longitude}{else}null{/if},"phone":{$branch.phone|default:''|json_encode},"markerColor":{$branch.marker_color|default:''|json_encode}{rdelim}{if !$smarty.foreach.markers.last},{/if}{/foreach}]{/capture}
+    {/if}
+
     {* ===== Main wrapper (CSS MUST be inside for OPC compatibility) ===== *}
     <div class="bbf-filialfinder-wrapper bbf-filialfinder-wrapper--{$ffInstanceId} {$instance->getStyleClasses()}"
          data-filialfinder
          data-provider="{$ffProvider|escape:'htmlall'}"
          data-settings="{$ffData.settings|json_encode|escape:'htmlall'}"
+         {if !empty($ffBranchesJson)}data-branches="{$ffBranchesJson|escape:'htmlall'}"{/if}
          id="bbf-filialfinder-{$ffInstanceId}"
          style="{$instance->getStyleString()}">
 
@@ -464,77 +470,44 @@
                 {$ffData.settings.styling_no_results_text|default:'Keine Filialen gefunden.'|escape:'html'}
             </div>
         {/if}
+
+        {* ===== Consent placeholder (INSIDE wrapper — OPC moves elements outside) ===== *}
+        {if $ffData.settings.consent_enabled == '1' && $ffProvider === 'osm'}
+            <div class="bbf-filialfinder-consent-placeholder" id="bbf-ff-consent-{$ffInstanceId}" style="display:none;">
+                <p>{$ffData.settings.consent_placeholder_text|default:'Zur Anzeige der Karte wird ein externer Dienst (OpenStreetMap) geladen. Mit dem Laden stimmen Sie der Datenschutzerklaerung zu.'|escape:'html'}</p>
+                <button type="button" class="bbf-filialfinder-btn bbf-filialfinder-btn--primary" data-ff-consent-accept>Karte laden</button>
+            </div>
+        {/if}
     </div>
 
-    {* ===== Branch marker data as JSON for JS ===== *}
-    {if !empty($ffData.branches)}
-        <script type="application/json" data-ff-markers data-ff-instance="{$ffInstanceId}">
-        [
-            {foreach $ffData.branches as $branch name=markers}
-            {ldelim}
-                "id": {$branch.id|intval},
-                "name": {$branch.name|json_encode},
-                "street": {$branch.street|json_encode},
-                "zip": {$branch.zip|json_encode},
-                "city": {$branch.city|json_encode},
-                "lat": {if $branch.latitude}{$branch.latitude}{else}null{/if},
-                "lng": {if $branch.longitude}{$branch.longitude}{else}null{/if},
-                "phone": {$branch.phone|default:''|json_encode},
-                "markerColor": {$branch.marker_color|default:''|json_encode}
-            {rdelim}{if !$smarty.foreach.markers.last},{/if}
-            {/foreach}
-        ]
-        </script>
-    {/if}
-
-    {* ===== Consent placeholder (simple JS-based, not DB-based) ===== *}
-    {if $ffData.settings.consent_enabled == '1' && $ffProvider === 'osm'}
-        <div class="bbf-filialfinder-consent-placeholder" id="bbf-ff-consent-{$ffInstanceId}" style="display:none;">
-            <p>{$ffData.settings.consent_placeholder_text|default:'Zur Anzeige der Karte wird ein externer Dienst (OpenStreetMap) geladen. Mit dem Laden stimmen Sie der Datenschutzerklaerung zu.'|escape:'html'}</p>
-            <button type="button" class="bbf-filialfinder-btn bbf-filialfinder-btn--primary" data-ff-consent-accept>Karte laden</button>
-        </div>
-    {/if}
-
-    {* ===== JS: Leaflet (OSM) ===== *}
-    {if $ffProvider === 'osm'}
-        {if $ffBaseUrl}
-            <script src="{$ffBaseUrl}vendor/leaflet/leaflet.js"></script>
-        {else}
-            <script src="/plugins/bbfdesign_filialfinder/vendor/leaflet/leaflet.js"></script>
-        {/if}
-        {* CDN Fallback: if local Leaflet failed to load *}
-        <script>
-        if (typeof L === 'undefined') {
-            var _s = document.createElement('script');
-            _s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            _s.onload = function() { document.dispatchEvent(new Event('bbf-leaflet-ready')); };
-            document.head.appendChild(_s);
-            if (!document.querySelector('link[href*="leaflet.css"]')) {
-                var _c = document.createElement('link'); _c.rel = 'stylesheet';
-                _c.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                document.head.appendChild(_c);
-            }
-        }
-        </script>
-    {/if}
-
-    {* ===== Inline map initialization for the OPC portlet context ===== *}
+    {* ===== JS: Leaflet (OSM) — loaded via dynamic script to avoid OPC displacement ===== *}
     <script>
     (function() {
         'use strict';
 
         var wrapper = document.getElementById('bbf-filialfinder-{$ffInstanceId}');
-        if (!wrapper) return;
+        if (!wrapper) {
+            {* OPC fallback: search by class if getElementById fails *}
+            var wrappers = document.querySelectorAll('.bbf-filialfinder-wrapper[data-filialfinder]');
+            if (wrappers.length > 0) wrapper = wrappers[wrappers.length - 1];
+            if (!wrapper) return;
+        }
 
         var mapEl = wrapper.querySelector('[data-ff-map]');
         var provider = '{$ffProvider|escape:"javascript"}';
         var consentEnabled = {if $ffData.settings.consent_enabled == '1'}true{else}false{/if};
-        var consentEl = document.getElementById('bbf-ff-consent-{$ffInstanceId}');
+        var consentEl = document.getElementById('bbf-ff-consent-{$ffInstanceId}')
+            || wrapper.querySelector('.bbf-filialfinder-consent-placeholder');
 
-        {* Consent check (localStorage based) *}
+        {* Consent check — respects JTL Consent Manager (if Leaflet is loaded, JTL already gave consent) *}
         function hasConsent() {
             if (!consentEnabled) return true;
-            return localStorage.getItem('bbf_maps_consent') === '1';
+            if (localStorage.getItem('bbf_maps_consent') === '1') return true;
+            if (provider === 'osm' && typeof L !== 'undefined') {
+                localStorage.setItem('bbf_maps_consent', '1');
+                return true;
+            }
+            return false;
         }
 
         function grantConsent() {
@@ -592,9 +565,6 @@
         {* Initialize map if consent given or not required *}
         function initMap() {
             if (!mapEl || !hasConsent()) return;
-            {* The filialfinder-leaflet.js / filialfinder-google.js scripts
-               auto-initialize maps on [data-ff-map] elements.
-               Dispatch a ready event to trigger initialization if scripts already loaded. *}
             if (typeof window.BbfFilialfinderMap !== 'undefined') {
                 window.BbfFilialfinderMap.init(wrapper);
             } else {
@@ -606,13 +576,20 @@
         }
 
         function initLeafletMap() {
-            var markersJson = wrapper.querySelector('script[data-ff-markers]');
-            if (!markersJson) return;
+            {* OPC-safe: read branches from data attribute (OPC moves <script> tags outside wrapper) *}
+            var branchesAttr = wrapper.getAttribute('data-branches');
+            if (!branchesAttr) {
+                console.warn('[BBF Filialfinder] No data-branches attribute on wrapper');
+                return;
+            }
 
             var branches;
             try {
-                branches = JSON.parse(markersJson.textContent);
-            } catch(e) { return; }
+                branches = JSON.parse(branchesAttr);
+            } catch(e) {
+                console.error('[BBF Filialfinder] Failed to parse data-branches:', e.message);
+                return;
+            }
 
             var validBranches = branches.filter(function(b) { return b.lat && b.lng; });
 
@@ -686,26 +663,37 @@
             setTimeout(function() { map.invalidateSize(); }, 300);
         }
 
-        {* Auto-init: wait for Leaflet, then init map *}
-        function tryInitMap() {
-            if (!hasConsent()) return;
-            if (provider === 'osm' && typeof L === 'undefined') {
-                if (typeof tryInitMap._retries === 'undefined') tryInitMap._retries = 0;
-                if (tryInitMap._retries < 50) {
-                    tryInitMap._retries++;
-                    setTimeout(tryInitMap, 200);
-                } else {
-                    if (mapEl) mapEl.innerHTML = '<p style="text-align:center;padding:40px;color:#c00;">Leaflet.js konnte nicht geladen werden. Pr&uuml;fen Sie die Plugin-Konfiguration.</p>';
+        {* Load Leaflet dynamically (avoids OPC moving <script src> tags) *}
+        function loadLeaflet(cb) {
+            if (typeof L !== 'undefined') { cb(); return; }
+            var baseUrl = '{if $ffBaseUrl}{$ffBaseUrl|escape:"javascript"}{else}/plugins/bbfdesign_filialfinder/{/if}';
+            var s = document.createElement('script');
+            s.src = baseUrl + 'vendor/leaflet/leaflet.js';
+            s.onload = cb;
+            s.onerror = function() {
+                {* CDN fallback *}
+                var cdn = document.createElement('script');
+                cdn.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                cdn.onload = cb;
+                document.head.appendChild(cdn);
+                if (!document.querySelector('link[href*="leaflet.css"]')) {
+                    var c = document.createElement('link'); c.rel = 'stylesheet';
+                    c.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                    document.head.appendChild(c);
                 }
-                return;
-            }
-            initMap();
+            };
+            document.head.appendChild(s);
         }
 
-        {* Listen for Leaflet CDN fallback load event *}
-        document.addEventListener('bbf-leaflet-ready', function() {
-            if (mapEl && !mapEl._leaflet_id) tryInitMap();
-        });
+        {* Auto-init: load Leaflet then init map *}
+        function tryInitMap() {
+            if (!hasConsent()) return;
+            if (provider === 'osm') {
+                loadLeaflet(function() { initMap(); });
+            } else {
+                initMap();
+            }
+        }
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', tryInitMap);

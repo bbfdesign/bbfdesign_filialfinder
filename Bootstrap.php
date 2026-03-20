@@ -98,15 +98,25 @@ class Bootstrap extends Bootstrapper
                                 }
                                 $pq->append('<style id="bbf-filialfinder-dynamic">' . $dynamicCss . '</style>');
 
-                                // Leaflet CSS if OSM
+                                // Leaflet CSS + JS if OSM
                                 $mapProvider = $allSettings['map_provider'] ?? 'osm';
+                                $pluginBaseUrl = $pluginFrontendUrl . '../';
                                 if ($mapProvider === 'osm') {
-                                    $leafletUrl = $pluginFrontendUrl . '../vendor/leaflet/leaflet.css';
+                                    $leafletUrl = $pluginBaseUrl . 'vendor/leaflet/leaflet.css';
                                     $pq->append('<link rel="stylesheet" href="' . $leafletUrl . '">');
-                                    $clusterUrl = $pluginFrontendUrl . '../vendor/leaflet-markercluster/MarkerCluster.css';
+                                    $clusterUrl = $pluginBaseUrl . 'vendor/leaflet-markercluster/MarkerCluster.css';
                                     $pq->append('<link rel="stylesheet" href="' . $clusterUrl . '">');
-                                    $clusterDefaultUrl = $pluginFrontendUrl . '../vendor/leaflet-markercluster/MarkerCluster.Default.css';
+                                    $clusterDefaultUrl = $pluginBaseUrl . 'vendor/leaflet-markercluster/MarkerCluster.Default.css';
                                     $pq->append('<link rel="stylesheet" href="' . $clusterDefaultUrl . '">');
+
+                                    // JS files
+                                    $pqBody = \JTL\pq('body');
+                                    if ($pqBody->length > 0) {
+                                        $pqBody->append('<script src="' . $pluginBaseUrl . 'vendor/leaflet/leaflet.js" defer></script>');
+                                        $pqBody->append('<script src="' . $pluginFrontendUrl . 'js/filialfinder-leaflet.js" defer></script>');
+                                        $pqBody->append('<script src="' . $pluginFrontendUrl . 'js/filialfinder-core.js" defer></script>');
+                                        $pqBody->append('<script src="' . $pluginFrontendUrl . 'js/filialfinder-geo.js" defer></script>');
+                                    }
                                 }
                             }
                         }
@@ -148,6 +158,18 @@ class Bootstrap extends Bootstrapper
             $this->ensureTables($db);
             $settings = new Setting($db);
             $settings->addMissingSettings();
+
+            // Auto-import custom CSS from docs/ if DB value is empty
+            $currentCss = $settings->get('custom_css', '');
+            if (empty(trim((string)$currentCss))) {
+                $cssFile = $this->getPlugin()->getPaths()->getBasePath() . 'docs/god-of-games-custom.css';
+                if (file_exists($cssFile)) {
+                    $css = file_get_contents($cssFile);
+                    if ($css !== false && trim($css) !== '') {
+                        $settings->save('custom_css', $css);
+                    }
+                }
+            }
         } catch (\Throwable $e) {
             \error_log('BBF Filialfinder: Update error - ' . $e->getMessage());
         }
