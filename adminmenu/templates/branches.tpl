@@ -324,7 +324,11 @@
         </div>
 
         <div class="bbf-form-group">
-          <div class="bbf-upload-area" style="padding:20px;cursor:pointer;" onclick="document.getElementById('bbf-gallery-upload').click();">
+          <div class="bbf-upload-area" style="padding:20px;cursor:pointer;"
+               onclick="document.getElementById('bbf-gallery-upload').click();"
+               ondragover="event.preventDefault(); this.classList.add('bbf-drag-over');"
+               ondragleave="this.classList.remove('bbf-drag-over');"
+               ondrop="event.preventDefault(); this.classList.remove('bbf-drag-over'); bbfHandleGalleryDrop(event);">
             <input type="file" id="bbf-gallery-upload" accept="image/*" multiple style="display:none;" onchange="bbfUploadGalleryImages(this);">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <p style="margin-top:8px;font-size:13px;color:var(--bbf-muted);">Bilder hinzuf&uuml;gen (klicken oder hierher ziehen)</p>
@@ -744,6 +748,16 @@ document.getElementById('bbf-field-marker_color').addEventListener('input', func
 });
 
 /* ── Gallery Functions ── */
+
+function bbfHandleGalleryDrop(event) {
+  var files = event.dataTransfer.files;
+  if (!files || !files.length) return;
+  var dt = new DataTransfer();
+  Array.from(files).forEach(function(f) { dt.items.add(f); });
+  var input = document.getElementById('bbf-gallery-upload');
+  input.files = dt.files;
+  bbfUploadGalleryImages(input);
+}
 
 function bbfUploadGalleryImages(input) {
   var branchId = document.getElementById('bbf-field-branch_id').value;

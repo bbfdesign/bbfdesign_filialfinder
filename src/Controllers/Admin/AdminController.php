@@ -901,7 +901,7 @@ class AdminController
 
         // Handle optional thumbnail upload
         if (!empty($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = $this->plugin->getPaths()->getFrontendPath() . 'img/videos';
+            $uploadDir = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'branches';
             $filename = $this->branchService->handleImageUpload($_FILES['thumbnail'], $uploadDir);
             if ($filename) {
                 $data['thumbnail_path'] = $filename;
@@ -939,7 +939,7 @@ class AdminController
         );
 
         if ($video && !empty($video->thumbnail_path)) {
-            $filePath = $this->plugin->getPaths()->getFrontendPath() . 'img/videos/' . basename($video->thumbnail_path);
+            $filePath = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'branches/' . basename($video->thumbnail_path);
             if (file_exists($filePath)) {
                 @unlink($filePath);
             }
