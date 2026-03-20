@@ -216,8 +216,6 @@ class AdminController
             'osm_standard' => ['name' => 'OpenStreetMap Standard', 'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'],
             'osm_de'       => ['name' => 'OpenStreetMap DE', 'url' => 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png'],
             'opentopomap'  => ['name' => 'OpenTopoMap', 'url' => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'],
-            'stamen_toner' => ['name' => 'Stamen Toner', 'url' => 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png'],
-            'stamen_watercolor' => ['name' => 'Stamen Watercolor', 'url' => 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'],
             'cartodb_positron' => ['name' => 'CartoDB Positron', 'url' => 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'],
             'cartodb_dark' => ['name' => 'CartoDB Dark Matter', 'url' => 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
             'openfreemap' => ['name' => 'OpenFreeMap (kostenlos)', 'url' => 'https://tiles.openfreemap.org/tile/{z}/{x}/{y}.png'],

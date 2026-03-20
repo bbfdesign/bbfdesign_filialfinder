@@ -314,51 +314,81 @@
         </div>
       </div>
 
-      {* ── Tab: Medien (Galerie & Videos) ── *}
+      {* ── Tab: Medien (Galerie & Videos) — Bikepark Routes Style ── *}
       <div class="bbf-tab-content" id="tab-media">
-        <h3 style="margin:0 0 16px;">Galerie</h3>
-        <p class="bbf-form-hint" style="margin-bottom:12px;">Bilder f&uuml;r das Detail-Modal. Drag &amp; Drop zum Sortieren. Max. 10 Bilder.</p>
 
-        <div id="bbf-gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-bottom:16px;">
-          {* Gallery images loaded dynamically when editing *}
-        </div>
-
-        <div class="bbf-form-group">
-          <div class="bbf-upload-area" style="padding:20px;cursor:pointer;"
-               onclick="document.getElementById('bbf-gallery-upload').click();"
-               ondragover="event.preventDefault(); this.classList.add('bbf-drag-over');"
-               ondragleave="this.classList.remove('bbf-drag-over');"
-               ondrop="event.preventDefault(); this.classList.remove('bbf-drag-over'); bbfHandleGalleryDrop(event);">
-            <input type="file" id="bbf-gallery-upload" accept="image/*" multiple style="display:none;" onchange="bbfUploadGalleryImages(this);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <p style="margin-top:8px;font-size:13px;color:var(--bbf-muted);">Bilder hinzuf&uuml;gen (klicken oder hierher ziehen)</p>
+        {* ── Media Grid Header ── *}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <h3 style="margin:0;font-weight:600;">Medien</h3>
+            <small style="color:var(--bbf-muted);">Ziehen zum Sortieren &mdash; Reihenfolge bestimmt die Darstellung im Frontend</small>
           </div>
         </div>
 
-        <hr style="border:none;border-top:1px solid var(--bbf-border);margin:24px 0;">
-
-        <h3 style="margin:0 0 16px;">Videos</h3>
-        <p class="bbf-form-hint" style="margin-bottom:12px;">YouTube-, Vimeo- oder MP4-URLs hinzuf&uuml;gen.</p>
-
-        <div id="bbf-video-list" style="margin-bottom:16px;">
-          {* Videos loaded dynamically when editing *}
+        {* ── Sortable Media Grid ── *}
+        <div id="bbf-media-grid" class="bbf-media-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;min-height:80px;margin-bottom:20px;">
+          <div class="bbf-media-empty" id="bbf-media-empty" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:#aaa;border:2px dashed #e9ecef;border-radius:10px;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c4cdd5" stroke-width="1.5"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p style="margin-top:8px;">Noch keine Medien vorhanden</p>
+            <small>Bilder oder Videos unten hinzuf&uuml;gen</small>
+          </div>
         </div>
 
-        <div class="bbf-form-row" style="align-items:flex-end;">
-          <div class="bbf-form-group" style="flex:1;">
-            <label class="bbf-form-label" for="bbf-video-url">Video-URL</label>
-            <input type="url" class="bbf-form-control" id="bbf-video-url" placeholder="https://www.youtube.com/watch?v=...">
-          </div>
-          <div class="bbf-form-group" style="flex:0;">
-            <label class="bbf-form-label" for="bbf-video-title">Titel (optional)</label>
-            <input type="text" class="bbf-form-control" id="bbf-video-title" placeholder="Filialvideo">
-          </div>
-          <div class="bbf-form-group">
-            <button type="button" class="bbf-btn bbf-btn-secondary bbf-btn-sm" onclick="bbfAddVideo()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Hinzuf&uuml;gen
+        {* ── Add Media Panel ── *}
+        <div style="background:#f8f9fb;border:1.5px solid #e9ecef;border-radius:12px;overflow:hidden;">
+
+          {* Type Tabs *}
+          <div style="display:flex;border-bottom:1.5px solid #e9ecef;background:#fff;">
+            <button type="button" class="bbf-media-type-btn active" data-type="image" onclick="bbfMediaSwitchType('image',this)" style="flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;border-bottom:2.5px solid var(--bbf-primary);color:var(--bbf-primary);margin-bottom:-1.5px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Bilder hochladen
+            </button>
+            <button type="button" class="bbf-media-type-btn" data-type="video" onclick="bbfMediaSwitchType('video',this)" style="flex:1;padding:12px 16px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;border-bottom:2.5px solid transparent;color:var(--bbf-muted);margin-bottom:-1.5px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              Video hinzuf&uuml;gen
             </button>
           </div>
+
+          {* Image Upload Panel *}
+          <div id="bbf-media-panel-image" style="padding:20px;">
+            <div id="bbf-media-dropzone" style="border:2px dashed #c4cdd5;border-radius:10px;padding:28px 20px;text-align:center;background:#fff;cursor:pointer;transition:border-color .2s,background .2s;"
+                 onclick="document.getElementById('bbf-media-file-input').click();"
+                 ondragover="event.preventDefault();this.style.borderColor='var(--bbf-primary)';this.style.background='rgba(200,184,49,0.04)';"
+                 ondragleave="this.style.borderColor='#c4cdd5';this.style.background='#fff';"
+                 ondrop="event.preventDefault();this.style.borderColor='#c4cdd5';this.style.background='#fff';bbfMediaHandleDrop(event);">
+              <div style="margin-bottom:10px;color:var(--bbf-primary);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              </div>
+              <p style="margin:0 0 4px;font-size:14px;"><strong>Bilder hier ablegen</strong> oder <a href="#" onclick="event.preventDefault();event.stopPropagation();document.getElementById('bbf-media-file-input').click();" style="color:var(--bbf-primary);text-decoration:underline;">Dateien ausw&auml;hlen</a></p>
+              <p style="font-size:12px;color:#9aa5b4;margin:0;">JPG, PNG, WebP &bull; Mehrere Dateien gleichzeitig &bull; Auch per <kbd style="font-size:11px;padding:1px 4px;border:1px solid #ddd;border-radius:3px;background:#f5f5f5;">Strg+V</kbd> einf&uuml;gen</p>
+              <input type="file" id="bbf-media-file-input" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" multiple style="display:none;" onchange="bbfMediaUploadFiles(this.files);">
+            </div>
+
+            {* Upload Queue *}
+            <div id="bbf-media-upload-queue" style="display:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:12px;"></div>
+          </div>
+
+          {* Video Add Panel *}
+          <div id="bbf-media-panel-video" style="padding:20px;display:none;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+              <button type="button" class="bbf-media-provider-pill active" data-provider="youtube" onclick="bbfMediaSelectProvider('youtube',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid #e9ecef;background:var(--bbf-primary);color:#fff;font-size:12px;font-weight:500;cursor:pointer;">YouTube</button>
+              <button type="button" class="bbf-media-provider-pill" data-provider="vimeo" onclick="bbfMediaSelectProvider('vimeo',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid #e9ecef;background:#fff;color:var(--bbf-muted);font-size:12px;font-weight:500;cursor:pointer;">Vimeo</button>
+              <button type="button" class="bbf-media-provider-pill" data-provider="mp4" onclick="bbfMediaSelectProvider('mp4',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid #e9ecef;background:#fff;color:var(--bbf-muted);font-size:12px;font-weight:500;cursor:pointer;">MP4-URL</button>
+              <button type="button" class="bbf-media-provider-pill" data-provider="embed" onclick="bbfMediaSelectProvider('embed',this)" style="padding:5px 12px;border-radius:20px;border:1.5px solid #e9ecef;background:#fff;color:var(--bbf-muted);font-size:12px;font-weight:500;cursor:pointer;">Embed</button>
+            </div>
+            <div style="margin-bottom:12px;">
+              <input type="text" class="bbf-form-control" id="bbf-media-video-url" placeholder="YouTube Video-URL oder ID (z.B. dQw4w9WgXcQ)">
+              <small style="color:var(--bbf-muted);font-size:12px;" id="bbf-media-video-hint">YouTube: Video-ID oder vollst&auml;ndige URL eingeben</small>
+            </div>
+            <div style="margin-bottom:12px;">
+              <input type="text" class="bbf-form-control" id="bbf-media-video-title" placeholder="Titel (optional)">
+            </div>
+            <button type="button" class="bbf-btn bbf-btn-primary" onclick="bbfMediaAddVideo()" style="width:100%;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Video hinzuf&uuml;gen
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -524,27 +554,8 @@ function bbfLoadBranchData(id) {
           } catch(e) { tagsField.value = ''; }
         }
 
-        // Load gallery images
-        var grid = document.getElementById('bbf-gallery-grid');
-        if (grid) {
-          grid.innerHTML = '';
-          if (b.gallery && b.gallery.length) {
-            b.gallery.forEach(function(img) {
-              bbfAddGalleryThumb(img.id, img.image_path || img.url);
-            });
-          }
-        }
-
-        // Load videos
-        var videoList = document.getElementById('bbf-video-list');
-        if (videoList) {
-          videoList.innerHTML = '';
-          if (b.videos && b.videos.length) {
-            b.videos.forEach(function(v) {
-              bbfAddVideoRow(v.id, v.video_url, v.title || '', v.video_type || 'embed');
-            });
-          }
-        }
+        // Load media (unified grid — gallery + videos)
+        bbfMediaBuildGrid(b.gallery || [], b.videos || []);
 
         // Load opening hours from DB into form fields
         var dayKeys = ['mon','tue','wed','thu','fri','sat','sun'];
@@ -803,27 +814,68 @@ document.getElementById('bbf-field-marker_color').addEventListener('input', func
   document.getElementById('bbf-field-marker_color_hex').value = this.value;
 });
 
-/* ── Gallery Functions ── */
+/* ── Unified Media Functions (Bikepark Routes style) ── */
 
-function bbfHandleGalleryDrop(event) {
-  var files = event.dataTransfer.files;
-  if (!files || !files.length) return;
-  var dt = new DataTransfer();
-  Array.from(files).forEach(function(f) { dt.items.add(f); });
-  var input = document.getElementById('bbf-gallery-upload');
-  input.files = dt.files;
-  bbfUploadGalleryImages(input);
+function bbfMediaSwitchType(type, btn) {
+  document.querySelectorAll('.bbf-media-type-btn').forEach(function(b) {
+    b.style.borderBottomColor = 'transparent';
+    b.style.color = 'var(--bbf-muted)';
+    b.style.fontWeight = '500';
+    b.classList.remove('active');
+  });
+  btn.style.borderBottomColor = 'var(--bbf-primary)';
+  btn.style.color = 'var(--bbf-primary)';
+  btn.style.fontWeight = '600';
+  btn.classList.add('active');
+  document.getElementById('bbf-media-panel-image').style.display = type === 'image' ? '' : 'none';
+  document.getElementById('bbf-media-panel-video').style.display = type === 'video' ? '' : 'none';
 }
 
-function bbfUploadGalleryImages(input) {
+function bbfMediaSelectProvider(provider, btn) {
+  document.querySelectorAll('.bbf-media-provider-pill').forEach(function(p) {
+    p.style.background = '#fff'; p.style.color = 'var(--bbf-muted)';
+    p.classList.remove('active');
+  });
+  btn.style.background = 'var(--bbf-primary)'; btn.style.color = '#fff';
+  btn.classList.add('active');
+  var hints = { youtube: 'YouTube: Video-ID oder vollständige URL', vimeo: 'Vimeo: Video-ID oder URL', mp4: 'Direkte MP4-URL eingeben', embed: 'Embed-Code oder iframe-URL' };
+  var hint = document.getElementById('bbf-media-video-hint');
+  if (hint) hint.textContent = hints[provider] || '';
+}
+
+function bbfMediaHandleDrop(event) {
+  var files = event.dataTransfer.files;
+  if (files && files.length) bbfMediaUploadFiles(files);
+}
+
+function bbfMediaUploadFiles(files) {
   var branchId = document.getElementById('bbf-field-branch_id').value;
   if (!branchId || branchId === '0') {
     bbfToast('Bitte zuerst die Filiale speichern, bevor Bilder hochgeladen werden.', 'error');
     return;
   }
-  if (!input.files || !input.files.length) return;
+  if (!files || !files.length) return;
 
-  Array.from(input.files).forEach(function(file) {
+  var queue = document.getElementById('bbf-media-upload-queue');
+  queue.style.display = 'grid';
+  queue.innerHTML = '';
+
+  Array.from(files).forEach(function(file, idx) {
+    // Create queue preview item
+    var item = document.createElement('div');
+    item.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;background:#f0f0f0;aspect-ratio:1;display:flex;align-items:center;justify-content:center;';
+    item.id = 'bbf-queue-' + idx;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      item.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">' +
+        '<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#e9ecef;">' +
+        '<div id="bbf-queue-bar-' + idx + '" style="height:100%;background:var(--bbf-primary);width:0%;transition:width .3s;"></div></div>';
+    };
+    reader.readAsDataURL(file);
+    queue.appendChild(item);
+
+    // Upload
     var formData = new FormData();
     formData.append('image', file);
     formData.append('branch_id', branchId);
@@ -831,37 +883,66 @@ function bbfUploadGalleryImages(input) {
     formData.append('is_ajax', '1');
     formData.append('jtl_token', jtlToken);
 
-    fetch(postURL, { method: 'POST', body: formData })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
+    var xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', function(e) {
+      if (e.lengthComputable) {
+        var pct = Math.round((e.loaded / e.total) * 100);
+        var bar = document.getElementById('bbf-queue-bar-' + idx);
+        if (bar) bar.style.width = pct + '%';
+      }
+    });
+    xhr.onload = function() {
+      try {
+        var data = JSON.parse(xhr.responseText);
+        var el = document.getElementById('bbf-queue-' + idx);
         if (data.success) {
-          bbfAddGalleryThumb(data.id, data.url);
-          bbfToast('Bild hochgeladen', 'success');
+          if (el) el.innerHTML += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.7);color:#28a745;">&#10003;</div>';
+          bbfMediaAddToGrid('image', data.galleryId || data.id, data.url || data.filename);
         } else {
-          bbfToast(data.message || 'Upload fehlgeschlagen', 'error');
+          if (el) el.innerHTML += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.7);color:#dc3545;">&#10007;</div>';
         }
-      });
+      } catch(e) {}
+    };
+    xhr.open('POST', postURL, true);
+    xhr.send(formData);
   });
-  input.value = '';
+
+  // Reset file input
+  var input = document.getElementById('bbf-media-file-input');
+  if (input) input.value = '';
 }
 
-function bbfAddGalleryThumb(id, url) {
-  var grid = document.getElementById('bbf-gallery-grid');
-  var div = document.createElement('div');
-  div.setAttribute('data-gallery-id', id);
-  div.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;';
-  div.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;">' +
-    '<button type="button" onclick="bbfDeleteGalleryImage(' + id + ', this)" ' +
-    'style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.9);color:#fff;border:none;' +
-    'border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;">&times;</button>';
-  grid.appendChild(div);
+function bbfMediaAddToGrid(type, id, url) {
+  var grid = document.getElementById('bbf-media-grid');
+  var empty = document.getElementById('bbf-media-empty');
+  if (empty) empty.style.display = 'none';
+
+  var item = document.createElement('div');
+  item.setAttribute('data-media-type', type);
+  item.setAttribute('data-media-id', id);
+  item.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#f8f9fa;border:2px solid #e9ecef;aspect-ratio:1;cursor:grab;';
+
+  if (type === 'image') {
+    item.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;">' +
+      '<span style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;font-weight:600;text-transform:uppercase;padding:2px 6px;border-radius:4px;">BILD</span>';
+  } else {
+    item.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#1a1a1a;color:#fff;"><svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="10 8 16 12 10 16 10 8"/></svg></div>' +
+      '<span style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;font-weight:600;text-transform:uppercase;padding:2px 6px;border-radius:4px;">VIDEO</span>';
+  }
+
+  // Delete button
+  item.innerHTML += '<button type="button" onclick="bbfMediaDeleteItem(\'' + type + '\',' + id + ',this)" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border:none;border-radius:5px;background:rgba(220,38,38,.85);color:#fff;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;">&times;</button>';
+
+  grid.appendChild(item);
 }
 
-function bbfDeleteGalleryImage(id, btn) {
-  if (!confirm('Bild wirklich entfernen?')) return;
+function bbfMediaDeleteItem(type, id, btn) {
+  if (!confirm('Wirklich entfernen?')) return;
+  var action = type === 'image' ? 'deleteGalleryImage' : 'deleteVideo';
+  var idKey = type === 'image' ? 'gallery_id' : 'video_id';
   var formData = new FormData();
-  formData.append('action', 'deleteGalleryImage');
-  formData.append('image_id', id);
+  formData.append('action', action);
+  formData.append(idKey, id);
   formData.append('is_ajax', '1');
   formData.append('jtl_token', jtlToken);
 
@@ -869,29 +950,27 @@ function bbfDeleteGalleryImage(id, btn) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data.success) {
-        var el = btn.closest('[data-gallery-id]');
+        var el = btn.closest('[data-media-id]');
         if (el) el.remove();
-        bbfToast('Bild entfernt', 'success');
+        // Show empty state if no items left
+        var grid = document.getElementById('bbf-media-grid');
+        if (grid && !grid.querySelector('[data-media-id]')) {
+          var empty = document.getElementById('bbf-media-empty');
+          if (empty) empty.style.display = '';
+        }
+        bbfToast('Entfernt', 'success');
       }
     });
 }
 
-function bbfLoadGallery(branchId) {
-  // Gallery is loaded via the branch data in bbfLoadBranchData
-  var grid = document.getElementById('bbf-gallery-grid');
-  if (grid) grid.innerHTML = '';
-}
-
-/* ── Video Functions ── */
-
-function bbfAddVideo() {
+function bbfMediaAddVideo() {
   var branchId = document.getElementById('bbf-field-branch_id').value;
   if (!branchId || branchId === '0') {
     bbfToast('Bitte zuerst die Filiale speichern.', 'error');
     return;
   }
-  var urlInput = document.getElementById('bbf-video-url');
-  var titleInput = document.getElementById('bbf-video-title');
+  var urlInput = document.getElementById('bbf-media-video-url');
+  var titleInput = document.getElementById('bbf-media-video-title');
   if (!urlInput.value.trim()) { bbfToast('Bitte Video-URL eingeben', 'error'); return; }
 
   var formData = new FormData();
@@ -906,44 +985,59 @@ function bbfAddVideo() {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data.success) {
-        bbfAddVideoRow(data.id, urlInput.value.trim(), titleInput.value.trim(), data.video_type || 'embed');
+        bbfMediaAddToGrid('video', data.videoId || data.id, '');
         urlInput.value = '';
         titleInput.value = '';
-        bbfToast('Video hinzugefügt', 'success');
+        bbfToast('Video hinzugef\u00fcgt', 'success');
       } else {
         bbfToast(data.message || 'Fehler', 'error');
       }
     });
 }
 
-function bbfAddVideoRow(id, url, title, type) {
-  var list = document.getElementById('bbf-video-list');
-  var div = document.createElement('div');
-  div.setAttribute('data-video-id', id);
-  div.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bbf-border);';
-  var typeLabel = { youtube: 'YouTube', vimeo: 'Vimeo', mp4: 'MP4', embed: 'Embed' };
-  div.innerHTML = '<span class="bbf-badge bbf-badge-info" style="font-size:11px;">' + (typeLabel[type] || type) + '</span>' +
-    '<span style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
-    (title ? '<strong>' + bbfEscape(title) + '</strong> — ' : '') + bbfEscape(url) + '</span>' +
-    '<button type="button" class="bbf-btn-icon bbf-btn-icon-danger bbf-btn-sm" onclick="bbfDeleteVideo(' + id + ', this)">' +
-    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
-  list.appendChild(div);
-}
+function bbfMediaBuildGrid(gallery, videos) {
+  var grid = document.getElementById('bbf-media-grid');
+  var empty = document.getElementById('bbf-media-empty');
+  if (!grid) return;
 
-function bbfDeleteVideo(id, btn) {
-  var formData = new FormData();
-  formData.append('action', 'deleteVideo');
-  formData.append('video_id', id);
-  formData.append('is_ajax', '1');
-  formData.append('jtl_token', jtlToken);
+  // Clear existing items but keep empty state
+  grid.querySelectorAll('[data-media-id]').forEach(function(el) { el.remove(); });
 
-  fetch(postURL, { method: 'POST', body: formData })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.success) {
-        var el = btn.closest('[data-video-id]');
-        if (el) el.remove();
-      }
+  var hasItems = false;
+  if (gallery && gallery.length) {
+    gallery.forEach(function(img) {
+      bbfMediaAddToGrid('image', img.id, img.image_path || img.url);
     });
+    hasItems = true;
+  }
+  if (videos && videos.length) {
+    videos.forEach(function(v) {
+      bbfMediaAddToGrid('video', v.id, '');
+    });
+    hasItems = true;
+  }
+  if (empty) empty.style.display = hasItems ? 'none' : '';
 }
+
+// Clipboard paste support
+document.addEventListener('paste', function(e) {
+  var activeTab = document.querySelector('#tab-media.active');
+  if (!activeTab) return;
+  var items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  var files = [];
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf('image') !== -1) {
+      files.push(items[i].getAsFile());
+    }
+  }
+  if (files.length) {
+    e.preventDefault();
+    bbfMediaUploadFiles(files);
+  }
+});
+
+// Legacy aliases for backward compatibility
+function bbfAddGalleryThumb(id, url) { bbfMediaAddToGrid('image', id, url); }
+function bbfAddVideoRow(id, url, title, type) { bbfMediaAddToGrid('video', id, ''); }
 </script>

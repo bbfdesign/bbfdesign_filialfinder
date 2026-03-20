@@ -96,8 +96,8 @@
             </p>
             <p>
                 <strong>OpenStreetMap:</strong> OpenStreetMap ist kostenlos und ben&ouml;tigt keinen API-Key. Es stehen
-                7 verschiedene Tile-Server zur Verf&uuml;gung, darunter die Standard-OSM-Kacheln, CartoDB (hell und dunkel),
-                Stamen-Karten und weitere Varianten. Die Darstellung basiert auf der Leaflet-Bibliothek.
+                verschiedene Tile-Server zur Verf&uuml;gung, darunter die Standard-OSM-Kacheln, CartoDB (hell und dunkel),
+                OpenFreeMap, MapTiler und weitere Varianten. Die Darstellung basiert auf der Leaflet-Bibliothek.
             </p>
             <p>
                 <strong>Marker-Anpassung:</strong> Die Kartenmarker k&ouml;nnen farblich angepasst werden (siehe Farben &amp; Styling).

@@ -135,8 +135,6 @@ class BbfFilialfinder extends Portlet
                 'osm_standard'      => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 'osm_de'            => 'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png',
                 'opentopomap'       => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                'stamen_toner'      => 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png',
-                'stamen_watercolor' => 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
                 'cartodb_positron'  => 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
                 'cartodb_dark'      => 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
                 'openfreemap'       => 'https://tiles.openfreemap.org/tile/{z}/{x}/{y}.png',
