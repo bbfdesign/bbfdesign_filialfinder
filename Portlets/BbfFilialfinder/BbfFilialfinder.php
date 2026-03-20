@@ -96,6 +96,7 @@ class BbfFilialfinder extends Portlet
                     $branch['hours'] ?? [],
                     $branch['special_days'] ?? []
                 );
+                $branch['hours_summary'] = $statusService->formatHoursSummary($branch['hours'] ?? []);
             }
             unset($branch);
 

@@ -89,6 +89,7 @@ class Setting
         'card_show_image'        => '1',
         'card_show_country'      => '0',
         'card_show_description'  => '0',
+        'card_hours_display'     => 'summary',
         'card_detail_btn_text'   => 'Details anzeigen',
         'card_route_btn_text'    => 'Route berechnen',
 

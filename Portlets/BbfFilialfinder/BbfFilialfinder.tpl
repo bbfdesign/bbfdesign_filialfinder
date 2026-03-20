@@ -97,13 +97,19 @@
                                         </p>
                                         {if $branch.phone}
                                             <p class="bbf-filialfinder-card-phone">
-                                                <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
+                                                Telefon: <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
                                             </p>
                                         {/if}
                                         {if $branch.email}
                                             <p class="bbf-filialfinder-card-email">
                                                 <a href="mailto:{$branch.email|escape:'htmlall'}">{$branch.email|escape:'html'}</a>
                                             </p>
+                                        {/if}
+                                        {if $ffData.settings.card_show_hours == '1' && $ffData.settings.card_hours_display != 'none' && !empty($branch.hours_summary)}
+                                            <div class="bbf-filialfinder-card-hours">
+                                                <strong>Öffnungszeiten:</strong><br>
+                                                {$branch.hours_summary|escape:'html'|nl2br}
+                                            </div>
                                         {/if}
                                         {if $branch.status && $branch.status.text}
                                             <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">

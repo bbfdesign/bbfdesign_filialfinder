@@ -281,6 +281,65 @@ class OpeningStatusService
     }
 
     /**
+     * Format opening hours as a human-readable summary.
+     * Groups consecutive days with the same hours (e.g. "Mo - Fr: 10:00 - 19:00 Uhr").
+     *
+     * @param object[] $hours
+     */
+    public function formatHoursSummary(array $hours): string
+    {
+        if (empty($hours)) {
+            return '';
+        }
+
+        $dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+        // Index hours by day
+        $byDay = [];
+        foreach ($hours as $h) {
+            $byDay[(int)$h->day_of_week] = $h;
+        }
+
+        $groups = [];
+        $currentGroup = null;
+
+        for ($day = 0; $day < 7; $day++) {
+            $h = $byDay[$day] ?? null;
+            if (!$h || !(int)$h->is_open || empty($h->open_time_1)) {
+                if ($currentGroup !== null) {
+                    $groups[] = $currentGroup;
+                    $currentGroup = null;
+                }
+                continue;
+            }
+            $timeStr = substr($h->open_time_1, 0, 5) . ' - ' . substr($h->close_time_1, 0, 5) . ' Uhr';
+            if (!empty($h->open_time_2) && !empty($h->close_time_2)) {
+                $timeStr .= ', ' . substr($h->open_time_2, 0, 5) . ' - ' . substr($h->close_time_2, 0, 5) . ' Uhr';
+            }
+            if ($currentGroup && $currentGroup['time'] === $timeStr) {
+                $currentGroup['endDay'] = $day;
+            } else {
+                if ($currentGroup) {
+                    $groups[] = $currentGroup;
+                }
+                $currentGroup = ['startDay' => $day, 'endDay' => $day, 'time' => $timeStr];
+            }
+        }
+        if ($currentGroup) {
+            $groups[] = $currentGroup;
+        }
+
+        $lines = [];
+        foreach ($groups as $g) {
+            if ($g['startDay'] === $g['endDay']) {
+                $lines[] = $dayNames[$g['startDay']] . ': ' . $g['time'];
+            } else {
+                $lines[] = $dayNames[$g['startDay']] . ' - ' . $dayNames[$g['endDay']] . ': ' . $g['time'];
+            }
+        }
+        return implode("\n", $lines);
+    }
+
+    /**
      * Export opening status data as JSON for frontend JS.
      *
      * @param array<int, array<string, mixed>> $branches

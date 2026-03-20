@@ -117,13 +117,14 @@ class FilialfinderSmartyPlugin
             usort($branches, fn($a, $b) => strcasecmp($a['name'], $b['name']));
         }
 
-        // Calculate opening status for each branch
+        // Calculate opening status and hours summary for each branch
         foreach ($branches as &$branch) {
             $branch['status'] = $statusService->getStatus(
                 $branch,
                 $branch['hours'] ?? [],
                 $branch['special_days'] ?? []
             );
+            $branch['hours_summary'] = $statusService->formatHoursSummary($branch['hours'] ?? []);
         }
         unset($branch);
 
