@@ -545,6 +545,51 @@ function bbfLoadBranchData(id) {
             });
           }
         }
+
+        // Load opening hours from DB into form fields
+        var dayKeys = ['mon','tue','wed','thu','fri','sat','sun'];
+        // Reset all days to unchecked first
+        dayKeys.forEach(function(key) {
+          var toggle = document.getElementById('bbf-hours-open-' + key);
+          if (toggle) { toggle.checked = false; bbfToggleDayHours(key, toggle); }
+          var o1 = document.getElementById('bbf-hours-open-time-1-' + key);
+          var c1 = document.getElementById('bbf-hours-close-time-1-' + key);
+          var o2 = document.getElementById('bbf-hours-open-time-2-' + key);
+          var c2 = document.getElementById('bbf-hours-close-time-2-' + key);
+          if (o1) o1.value = '';
+          if (c1) c1.value = '';
+          if (o2) o2.value = '';
+          if (c2) c2.value = '';
+        });
+        if (b.hours && b.hours.length) {
+          b.hours.forEach(function(h) {
+            var dayIdx = parseInt(h.day_of_week);
+            if (dayIdx < 0 || dayIdx > 6) return;
+            var key = dayKeys[dayIdx];
+            var toggle = document.getElementById('bbf-hours-open-' + key);
+            if (toggle) {
+              toggle.checked = !!(parseInt(h.is_open));
+              bbfToggleDayHours(key, toggle);
+            }
+            var o1 = document.getElementById('bbf-hours-open-time-1-' + key);
+            var c1 = document.getElementById('bbf-hours-close-time-1-' + key);
+            var o2 = document.getElementById('bbf-hours-open-time-2-' + key);
+            var c2 = document.getElementById('bbf-hours-close-time-2-' + key);
+            if (o1 && h.open_time_1)  o1.value = h.open_time_1.substring(0, 5);
+            if (c1 && h.close_time_1) c1.value = h.close_time_1.substring(0, 5);
+            if (o2 && h.open_time_2)  o2.value = h.open_time_2.substring(0, 5);
+            if (c2 && h.close_time_2) c2.value = h.close_time_2.substring(0, 5);
+          });
+        }
+
+        // Load special days
+        var sdContainer = document.getElementById('bbf-special-days');
+        if (sdContainer && b.special_days && b.special_days.length) {
+          sdContainer.innerHTML = '';
+          b.special_days.forEach(function(sd) {
+            bbfAddSpecialDayRow(sd);
+          });
+        }
       }
     });
 }
@@ -618,9 +663,20 @@ function bbfToggleDayHours(day, el) {
   }
 }
 
-function bbfAddSpecialDayRow() {
+function bbfAddSpecialDayRow(data) {
   var template = document.getElementById('bbf-special-day-template');
   var clone = template.content.cloneNode(true);
+  if (data) {
+    var inputs = clone.querySelectorAll('input, select');
+    inputs.forEach(function(inp) {
+      var name = inp.name || '';
+      if (name.indexOf('special_day_date') > -1 && data.date) inp.value = data.date;
+      if (name.indexOf('special_day_closed') > -1) inp.checked = !!(parseInt(data.is_closed));
+      if (name.indexOf('special_day_open_time') > -1 && data.open_time) inp.value = data.open_time.substring(0, 5);
+      if (name.indexOf('special_day_close_time') > -1 && data.close_time) inp.value = data.close_time.substring(0, 5);
+      if (name.indexOf('special_day_note') > -1 && data.note) inp.value = data.note;
+    });
+  }
   document.getElementById('bbf-special-days').appendChild(clone);
 }
 
