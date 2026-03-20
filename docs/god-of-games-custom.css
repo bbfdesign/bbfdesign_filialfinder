@@ -79,11 +79,25 @@
     text-decoration: underline;
 }
 
+/* ── 2-Spalten Card-Layout (Info links, Öffnungszeiten rechts) ── */
+.bbf-filialfinder-card-columns {
+    display: flex;
+    gap: 16px;
+}
+
+.bbf-filialfinder-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
 /* ── Öffnungszeiten im Card ── */
 .bbf-filialfinder-card-hours {
+    flex: 0 0 auto;
+    text-align: right;
+    white-space: nowrap;
     font-size: 17px;
     color: #1a1a1a;
-    margin: 6px 0;
+    margin: 0;
     line-height: 1.5;
 }
 
@@ -236,6 +250,7 @@
     .bbf-filialfinder-card-name { font-size: 18px; }
     .bbf-filialfinder-card-address { font-size: 14px; }
     .bbf-filialfinder-card-phone { font-size: 14px; }
-    .bbf-filialfinder-card-hours { font-size: 14px; }
+    .bbf-filialfinder-card-hours { font-size: 14px; text-align: left; white-space: normal; }
+    .bbf-filialfinder-card-columns { flex-direction: column; gap: 8px; }
     .bbf-filialfinder-btn--route { width: 100%; justify-content: center; }
 }

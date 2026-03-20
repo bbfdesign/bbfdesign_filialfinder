@@ -90,39 +90,43 @@
                                      aria-label="{$branch.name|escape:'htmlall'} - {$branch.street|escape:'htmlall'}, {$branch.city|escape:'htmlall'}">
                                     <div class="bbf-filialfinder-card-body">
                                         <h3 class="bbf-filialfinder-card-name">{$branch.name|escape:'html'}</h3>
-                                        {if $ffData.settings.card_show_address != '0'}
-                                            <p class="bbf-filialfinder-card-address">
-                                                {$branch.street|escape:'html'}, {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
-                                                {if $ffData.settings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
-                                            </p>
-                                        {/if}
-                                        {if $ffData.settings.card_show_phone != '0' && $branch.phone}
-                                            <p class="bbf-filialfinder-card-phone">
-                                                Telefon: <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
-                                            </p>
-                                        {/if}
-                                        {if $ffData.settings.card_show_email == '1' && $branch.email}
-                                            <p class="bbf-filialfinder-card-email">
-                                                <a href="mailto:{$branch.email|escape:'htmlall'}">{$branch.email|escape:'html'}</a>
-                                            </p>
-                                        {/if}
-                                        {if $ffData.settings.card_show_hours != '0' && !empty($branch.hours_summary)}
-                                            <div class="bbf-filialfinder-card-hours">
-                                                <strong>Öffnungszeiten:</strong><br>
-                                                {$branch.hours_summary|escape:'html'|nl2br}
+                                        <div class="bbf-filialfinder-card-columns">
+                                            <div class="bbf-filialfinder-card-info">
+                                                {if $ffData.settings.card_show_address != '0'}
+                                                    <p class="bbf-filialfinder-card-address">
+                                                        {$branch.street|escape:'html'}, {$branch.zip|escape:'html'} {$branch.city|escape:'html'}
+                                                        {if $ffData.settings.card_show_country == '1' && $branch.country}<br>{$branch.country|escape:'html'}{/if}
+                                                    </p>
+                                                {/if}
+                                                {if $ffData.settings.card_show_phone != '0' && $branch.phone}
+                                                    <p class="bbf-filialfinder-card-phone">
+                                                        Telefon: <a href="tel:{$branch.phone|escape:'url'}">{$branch.phone|escape:'html'}</a>
+                                                    </p>
+                                                {/if}
+                                                {if $ffData.settings.card_show_email == '1' && $branch.email}
+                                                    <p class="bbf-filialfinder-card-email">
+                                                        <a href="mailto:{$branch.email|escape:'htmlall'}">{$branch.email|escape:'html'}</a>
+                                                    </p>
+                                                {/if}
+                                                {if $ffData.settings.card_show_status != '0' && $branch.status && $branch.status.text}
+                                                    <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">
+                                                        {if $ffData.settings.status_animated_dot == '1'}
+                                                            <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
+                                                        {/if}
+                                                        <span class="bbf-filialfinder-status-text">{$branch.status.text|escape:'html'}</span>
+                                                        {if $branch.status.status == 'closed' && $branch.status.nextOpening && $ffData.settings.status_show_next_opening == '1'}
+                                                            <span class="bbf-filialfinder-status-next">&middot; {$branch.status.nextOpening|escape:'html'}</span>
+                                                        {/if}
+                                                    </span>
+                                                {/if}
                                             </div>
-                                        {/if}
-                                        {if $ffData.settings.card_show_status != '0' && $branch.status && $branch.status.text}
-                                            <span class="bbf-filialfinder-status {$branch.status.cssClass|escape:'htmlall'}" data-ff-status role="status">
-                                                {if $ffData.settings.status_animated_dot == '1'}
-                                                    <span class="bbf-filialfinder-status-dot" aria-hidden="true"></span>
-                                                {/if}
-                                                <span class="bbf-filialfinder-status-text">{$branch.status.text|escape:'html'}</span>
-                                                {if $branch.status.status == 'closed' && $branch.status.nextOpening && $ffData.settings.status_show_next_opening == '1'}
-                                                    <span class="bbf-filialfinder-status-next">&middot; {$branch.status.nextOpening|escape:'html'}</span>
-                                                {/if}
-                                            </span>
-                                        {/if}
+                                            {if $ffData.settings.card_show_hours != '0' && !empty($branch.hours_summary)}
+                                                <div class="bbf-filialfinder-card-hours">
+                                                    <strong>Öffnungszeiten:</strong><br>
+                                                    {$branch.hours_summary|escape:'html'|nl2br}
+                                                </div>
+                                            {/if}
+                                        </div>
                                         {if $ffData.settings.card_show_description == '1' && $branch.description}
                                             <p class="bbf-filialfinder-card-description">{$branch.description|escape:'html'}</p>
                                         {/if}

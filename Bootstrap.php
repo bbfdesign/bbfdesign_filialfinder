@@ -159,6 +159,9 @@ class Bootstrap extends Bootstrapper
             $settings = new Setting($db);
             $settings->addMissingSettings();
 
+            // Ensure mediafiles directories exist (persist across plugin updates)
+            $this->ensureMediaDirs($db);
+
             // Auto-import custom CSS from docs/ if DB value is empty
             $currentCss = $settings->get('custom_css', '');
             if (empty(trim((string)$currentCss))) {
@@ -300,6 +303,64 @@ class Bootstrap extends Bootstrapper
         }
 
         return false;
+    }
+
+    /**
+     * Get the media directory path (outside plugin dir, persists across updates).
+     */
+    public static function getMediaDir(): string
+    {
+        $shopRoot = defined('PFAD_ROOT') ? PFAD_ROOT : ($_SERVER['DOCUMENT_ROOT'] ?? '') . '/';
+        return rtrim($shopRoot, '/') . '/mediafiles/bbfdesign_filialfinder/';
+    }
+
+    /**
+     * Get the media URL for frontend.
+     */
+    public static function getMediaUrl(): string
+    {
+        return Shop::getURL() . '/mediafiles/bbfdesign_filialfinder/';
+    }
+
+    /**
+     * Ensure media directories exist and migrate old images from plugin dir.
+     */
+    private function ensureMediaDirs(\JTL\DB\DbInterface $db): void
+    {
+        $mediaDir = self::getMediaDir();
+        $dirs = [
+            $mediaDir,
+            $mediaDir . 'branches/',
+            $mediaDir . 'gallery/',
+        ];
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0755, true);
+            }
+        }
+
+        // Migrate images from old plugin dir to mediafiles (one-time)
+        $oldImgDir = $this->getPlugin()->getPaths()->getFrontendPath() . 'img/';
+        $newBranchDir = $mediaDir . 'branches/';
+        if (is_dir($oldImgDir)) {
+            foreach (glob($oldImgDir . 'branch_*.*') as $file) {
+                $dest = $newBranchDir . basename($file);
+                if (!file_exists($dest)) {
+                    @copy($file, $dest);
+                }
+            }
+        }
+
+        $oldGalleryDir = $oldImgDir . 'gallery/';
+        $newGalleryDir = $mediaDir . 'gallery/';
+        if (is_dir($oldGalleryDir)) {
+            foreach (glob($oldGalleryDir . '*.*') as $file) {
+                $dest = $newGalleryDir . basename($file);
+                if (!file_exists($dest)) {
+                    @copy($file, $dest);
+                }
+            }
+        }
     }
 
     /**

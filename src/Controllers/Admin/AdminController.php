@@ -353,7 +353,7 @@ class AdminController
 
         // Handle image upload
         if (!empty($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = $this->plugin->getPaths()->getFrontendPath() . 'img';
+            $uploadDir = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'branches';
             $filename = $this->branchService->handleImageUpload($_FILES['image'], $uploadDir);
             if ($filename) {
                 $data['image_path'] = $filename;
@@ -450,7 +450,7 @@ class AdminController
         // Delete image if exists
         $branch = $this->branchModel->getById($id);
         if ($branch && !empty($branch->image_path)) {
-            $uploadDir = $this->plugin->getPaths()->getFrontendPath() . 'img';
+            $uploadDir = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'branches';
             $this->branchService->deleteImage($branch->image_path, $uploadDir);
         }
 
@@ -598,14 +598,14 @@ class AdminController
             return ['success' => false, 'errors' => ['Kein Bild hochgeladen.']];
         }
 
-        $uploadDir = $this->plugin->getPaths()->getFrontendPath() . 'img';
+        $uploadDir = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'branches';
         $filename = $this->branchService->handleImageUpload($_FILES['image'], $uploadDir);
 
         if (!$filename) {
             return ['success' => false, 'errors' => ['Upload fehlgeschlagen. Erlaubte Formate: JPG, PNG, GIF, WebP, SVG (max. 5MB).']];
         }
 
-        $frontendUrl = $this->plugin->getPaths()->getFrontendURL() . 'img/' . $filename;
+        $frontendUrl = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaUrl() . 'branches/' . $filename;
         return ['success' => true, 'filename' => $filename, 'url' => $frontendUrl];
     }
 
@@ -619,7 +619,7 @@ class AdminController
             return ['success' => false, 'errors' => ['Kein Dateiname angegeben.']];
         }
 
-        $uploadDir = $this->plugin->getPaths()->getFrontendPath() . 'img';
+        $uploadDir = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'branches';
         $this->branchService->deleteImage($filename, $uploadDir);
 
         return ['success' => true, 'flag' => true, 'message' => 'Bild gelöscht.'];
@@ -781,7 +781,7 @@ class AdminController
             return ['success' => false, 'errors' => ['Kein Bild hochgeladen.']];
         }
 
-        $uploadDir = $this->plugin->getPaths()->getFrontendPath() . 'img/gallery';
+        $uploadDir = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'gallery';
         $filename = $this->branchService->handleImageUpload($_FILES['image'], $uploadDir);
 
         if (!$filename) {
@@ -805,7 +805,7 @@ class AdminController
             'sort_order' => $nextSort,
         ]);
 
-        $frontendUrl = $this->plugin->getPaths()->getFrontendURL() . 'img/gallery/' . $filename;
+        $frontendUrl = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaUrl() . 'gallery/' . $filename;
 
         return [
             'success'   => true,
@@ -835,9 +835,14 @@ class AdminController
         );
 
         if ($images && !empty($images->image_path)) {
-            $filePath = $this->plugin->getPaths()->getFrontendPath() . 'img/gallery/' . basename($images->image_path);
+            $filePath = \Plugin\bbfdesign_filialfinder\Bootstrap::getMediaDir() . 'gallery/' . basename($images->image_path);
             if (file_exists($filePath)) {
                 @unlink($filePath);
+            }
+            // Also try old path for backwards compatibility
+            $oldPath = $this->plugin->getPaths()->getFrontendPath() . 'img/gallery/' . basename($images->image_path);
+            if (file_exists($oldPath)) {
+                @unlink($oldPath);
             }
         }
 
